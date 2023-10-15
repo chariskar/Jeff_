@@ -1,7 +1,8 @@
 import random
 import disnake
 from disnake.ext import commands
-import Utils as Utils
+import Utils.Utils as Utils
+from Utils.Utils import *
 
 class ResCommand(commands.Cog):
     def __init__(self, bot):

@@ -1,7 +1,8 @@
 import random
 import disnake
 from disnake.ext import commands
-from Utils import *
+import Utils.Utils as Utils
+from Utils.Utils import *
 
 
 class NationCommand(commands.Cog):

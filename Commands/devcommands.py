@@ -4,8 +4,8 @@ from disnake.ext import commands
 import subprocess
 import aiohttp
 import time
-import Utils as Utils
-from Utils import *
+import Utils.Utils as Utils
+from Utils.Utils import *
 import sys
 import pytz
 class devcommand(commands.Cog):

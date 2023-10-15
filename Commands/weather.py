@@ -1,8 +1,8 @@
 import disnake
 from disnake.ext import commands
 import requests
-import Utils as Utils
-from Utils import *
+import Utils.Utils as Utils
+from Utils.Utils import *
 class Weather(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
