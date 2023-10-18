@@ -72,7 +72,7 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="An error occurred while processing your request.",
+                value=f'Error is {e}',
                 footer=commandString
             )
 
@@ -107,7 +107,7 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
 
@@ -147,13 +147,12 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
 
             await inter.edit_original_response(embed=embed, ephemeral=True)
 
-# ... (previous code) ...
 
     @nation.sub_command(description="Retrieve and display the list of allies of a nation.")
     async def allylist(
@@ -192,7 +191,7 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
 
@@ -235,7 +234,7 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
 
@@ -270,7 +269,7 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
 
@@ -296,7 +295,6 @@ class NationCommand(commands.Cog):
                 title=f"`{nationsLookup['strings']['nation']}'s Unallied Nations`",
                 footer=commandString,
                 author=inter.author,
-                inter=inter.author.accent_colour
             )
 
             allyList = nationsLookup["allies"]
@@ -322,13 +320,13 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
+
                 footer=commandString
             )
 
             await inter.edit_original_response(embed=embed, ephemeral=True)
 
-    # ... (other sub-commands) ...
 
 def setup(bot):
     bot.add_cog(NationCommand(bot))
