@@ -29,9 +29,9 @@ class ResCommand(commands.Cog):
                 username = random.choice(allResidentsLookup["allResidents"])
 
             residentsLookup = Utils.Lookup.lookup(server, endpoint="residents", name=username)
-        except:
+        except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="Check if you wrote a parameter incorrectly or if the server is currently offline",
+                value=f'Error is {e}',
                 type="userError",
                 footer=commandString,
             )
@@ -88,8 +88,10 @@ class ResCommand(commands.Cog):
 
             await inter.send(embed=embed, ephemeral=False)
 
-        except:
-            embed = Utils.Embeds.error_embed(value="If it is not evident that the error was your fault, please report it", footer=commandString)
+        except Exception as e:
+            embed = Utils.Embeds.error_embed(
+                value=f'Error is {e}',
+                footer=commandString)
             await inter.send(embed=embed, ephemeral=True)
 
 
@@ -104,9 +106,9 @@ class ResCommand(commands.Cog):
         await inter.response.defer()
         try:
             residentsLookup = Utils.Lookup.lookup(server.lower(), endpoint="residents", name=username)
-        except:
+        except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="Check if you wrote a parameter incorrectly or if the server is currently offline",
+                value=f'Error is {e}',
                 type="userError",
                 footer=commandString,
             )
@@ -128,8 +130,10 @@ class ResCommand(commands.Cog):
 
             await inter.send(embed=embed, ephemeral=False)
 
-        except:
-            embed = Utils.Embeds.error_embed(value="If it is not evident that the error was your fault, please report it", footer=commandString)
+        except Exception as e:
+            embed = Utils.Embeds.error_embed(
+                value=f'Error is {e}',
+                footer=commandString)
             await inter.send(embed=embed, ephemeral=True)
 
 

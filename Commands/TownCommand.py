@@ -35,7 +35,7 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="Check if you wrote a parameter incorrectly or if the server is currently offline",
+                value=f'Error is {e}',
                 type="userError",
                 footer=commandString
             )
@@ -106,7 +106,7 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
@@ -129,7 +129,7 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="Check if you wrote a parameter incorrectly or if the server is currently offline",
+                value=f'Error is {e}',
                 type="userError",
                 footer=commandString
             )
@@ -151,7 +151,7 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
@@ -174,7 +174,7 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="Check if you wrote a parameter incorrectly or if the server is currently offline",
+                value=f'Error is {e}',
                 type="userError",
                 footer=commandString
             )
@@ -209,7 +209,7 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
@@ -258,7 +258,7 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
             await inter.response.send_message(embed=embed, ephemeral=True)

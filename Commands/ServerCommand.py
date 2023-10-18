@@ -24,10 +24,9 @@ class ServerCommand(commands.Cog):
             allTownsLookup = await Utils.Lookup.lookup(server, endpoint="towns")
             allNationsLookup = await Utils.Lookup.lookup(server, endpoint="nations")
 
-        except:
+        except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="Check if you wrote a parameter incorrectly or if the server is currently offline",
-                type="userError",
+                value=f'Error is {e}',
                 footer=commandString
             )
 
@@ -65,9 +64,9 @@ class ServerCommand(commands.Cog):
 
             await inter.send(embed=embed, ephemeral=False)
 
-        except:
+        except Exception as e:
             embed = Utils.Embeds.error_embed(
-                value="If it is not evident that the error was your fault, please report it",
+                value=f'Error is {e}',
                 footer=commandString
             )
 

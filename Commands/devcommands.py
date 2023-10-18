@@ -20,7 +20,7 @@ class devcommand(commands.Cog):
         member = inter.author
 
         role_id = 1131896754070093954
-        role = disnake.utils.get(guild.roles, id=role_id)
+        role = disnake.utils.get(guild.roles, id=role_id,guild=1131117400985706538)
 
         if role in member.roles:
             embed = Utils.Embeds.embed_builder('Restarting', author=inter.author)
@@ -52,9 +52,10 @@ class devcommand(commands.Cog):
             embed = Utils.Embeds.embed_builder('Stopping', author=inter.author)
             embed.add_field(name='Program was run at', value=self.time, inline=True)
             await inter.edit_original_response(embed=embed)
-            exit(code=2)
+            exit(code=1)
         else:
             await inter.send(f"{member.display_name}, you do not have the required role.")
+            inter.followup('blud aint gonna happen soon',epheral=True)
 
     @commands.slash_command()
     async def ping(self, inter: disnake.ApplicationCommandInteraction):

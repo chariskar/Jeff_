@@ -66,12 +66,15 @@ class Lookup:
 
     @classmethod
     async def lookup(cls, server, endpoint=None, name=None):
-        if endpoint is None:
-            api_url = f"https://api.earthmc.net/v1/{server}/"
-        elif name is None:
-            api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}"
-        else:
-            api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}/{name}"
+        try:
+            if endpoint is None:
+                api_url = f"https://api.earthmc.net/v1/{server}/"
+            elif name is None:
+                api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}"
+            else:
+                api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}/{name}"
+        except Exception as e:
+            raise e
 
         # Check if the data is already cached
         if (server, endpoint, name) in cls.server_lookup_cache:
