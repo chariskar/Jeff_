@@ -73,25 +73,23 @@ class Lookup:
                 api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}"
             else:
                 api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}/{name}"
+
+            # Check if the data is already cached
+            if (server, endpoint, name) in cls.server_lookup_cache:
+                return cls.server_lookup_cache[(server, endpoint, name)]
+            async with aiohttp.ClientSession() as session:
+                async with session.get(api_url) as response:
+                    lookup = await response.json()
+            # Cache the data to avoid future API calls for the same lookup
+            cls.server_lookup_cache[(server, endpoint, name)] = lookup
+            return lookup
         except Exception as e:
             raise e
 
-        # Check if the data is already cached
-        if (server, endpoint, name) in cls.server_lookup_cache:
-            return cls.server_lookup_cache[(server, endpoint, name)]
-
-        async with aiohttp.ClientSession() as session:
-            async with session.get(api_url) as response:
-                lookup = await response.json()
-
-        # Cache the data to avoid future API calls for the same lookup
-        cls.server_lookup_cache[(server, endpoint, name)] = lookup
-
-        return lookup
 
 
 
-class Embeds():
+class Embeds:
 
      @staticmethod
      def embed_builder(title,description=None, author=None, footer='Maintained by charis_k', thumbnail=None, maintain_bot=False,
