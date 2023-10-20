@@ -7,10 +7,11 @@ from Utils.Utils import *
 class TownCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.footer = 'made by charis_k'
 
     @commands.slash_command()
-    async def town(self, inter):
-        pass
+    async def town(self, inter:disnake.ApplicationCommandInteraction):
+        await inter.send(f'this is the main /town command use subcommands')
 
     @town.sub_command(description="Provides general info about a town")
     async def search(
@@ -37,7 +38,7 @@ class TownCommand(commands.Cog):
             embed = Utils.Embeds.error_embed(
                 value=f'Error is {e}',
                 type="userError",
-                footer=commandString
+                footer=self.footer
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
             return
@@ -139,7 +140,7 @@ class TownCommand(commands.Cog):
         try:
             embed = Utils.Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}'s Residents",
-                footer=commandString,
+                footer=self.footer,
                 author=inter.author
             )
 
@@ -152,7 +153,7 @@ class TownCommand(commands.Cog):
         except Exception as e:
             embed = Utils.Embeds.error_embed(
                 value=f'Error is {e}',
-                footer=commandString
+                footer=self.footer
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
 
@@ -210,7 +211,7 @@ class TownCommand(commands.Cog):
         except Exception as e:
             embed = Utils.Embeds.error_embed(
                 value=f'Error is {e}',
-                footer=commandString
+                footer=self.footer
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
 
@@ -242,7 +243,7 @@ class TownCommand(commands.Cog):
         try:
             embed = Utils.Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}'s Outlaws",
-                footer=commandString,
+                footer=self.footer,
                 author=inter.author
             )
 
@@ -259,7 +260,7 @@ class TownCommand(commands.Cog):
         except Exception as e:
             embed = Utils.Embeds.error_embed(
                 value=f'Error is {e}',
-                footer=commandString
+                footer=self.footer
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
 

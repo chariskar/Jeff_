@@ -28,7 +28,7 @@ class ResCommand(commands.Cog):
                 allResidentsLookup = Utils.Lookup.lookup(server, endpoint="residents")
                 username = random.choice(allResidentsLookup["allResidents"])
 
-            residentsLookup = Utils.Lookup.lookup(server, endpoint="residents", name=username)
+            residentsLookup = await Utils.Lookup.lookup(server, endpoint="residents", name=username)
         except Exception as e:
             embed = Utils.Embeds.error_embed(
                 value=f'Error is {e}',

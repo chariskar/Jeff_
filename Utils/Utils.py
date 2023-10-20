@@ -4,6 +4,7 @@ import aiohttp
 import traceback
 from cachetools import TTLCache
 
+
 class CommandTools:
     def list_to_string(*args):
         return "\n".join(str(item) for item in args)
@@ -61,12 +62,19 @@ class CommandTools:
 
         return rnaoPermsList
 
+
 class Lookup:
-    server_lookup_cache = TTLCache(maxsize=100, ttl=60)
+    cache = TTLCache(maxsize=300, ttl=100)
+    try:
+        if len(cache) == cache.maxsize:
+            cache.clear()
+    except Exception as e:
+        raise e
 
     @classmethod
-    async def lookup(cls, server, endpoint=None, name=None):
+    async def lookup(cls, server:str= 'aurora', endpoint=None, name=None):
         try:
+
             if endpoint is None:
                 api_url = f"https://api.earthmc.net/v1/{server}/"
             elif name is None:
@@ -75,19 +83,16 @@ class Lookup:
                 api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}/{name}"
 
             # Check if the data is already cached
-            if (server, endpoint, name) in cls.server_lookup_cache:
-                return cls.server_lookup_cache[(server, endpoint, name)]
+            if (server, endpoint, name) in cls.cache:
+                return cls.cache[(server, endpoint, name)]
             async with aiohttp.ClientSession() as session:
                 async with session.get(api_url) as response:
                     lookup = await response.json()
-            # Cache the data to avoid future API calls for the same lookup
-            cls.server_lookup_cache[(server, endpoint, name)] = lookup
+
+            cls.cache[(server, endpoint, name)] = lookup
             return lookup
         except Exception as e:
             raise e
-
-
-
 
 class Embeds:
 
@@ -148,3 +153,4 @@ class Embeds:
         embed.add_field(name="Something went wrong", value=value, inline=True)
 
         return embed
+

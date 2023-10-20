@@ -1,8 +1,9 @@
 import disnake
+import aiohttp
 from disnake.ext import commands
-import requests
 import Utils.Utils as Utils
 from Utils.Utils import *
+import os
 class Weather(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -16,7 +17,7 @@ class Weather(commands.Cog):
             await inter.response.send_message("Invalid unit system. Please use 'metric' or 'imperial'.")
             return
 
-        api_key = ""  # Replace this with your OpenWeatherMap API key
+        api_key = str(os.environ.get('KEY'))
         base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
         params = {
@@ -25,10 +26,12 @@ class Weather(commands.Cog):
             "units": unit,
         }
 
-        response = requests.get(base_url, params=params)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(base_url,params=params) as response:
+                response = await response.json()
 
         if response.status_code == 200:
-            data = response.json()
+            data = response
 
             weather_description = data["weather"][0]["description"]
             temperature = data["main"]["temp"]

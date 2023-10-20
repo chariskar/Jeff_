@@ -1,1 +1,1 @@
-from Utils.Utils import *
+from Utils import *
