@@ -2,7 +2,7 @@ import disnake
 from disnake.ext import commands
 import Utils.Utils as Utils
 from Utils.Utils import *
-import requests
+
 class AllianceCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -17,29 +17,30 @@ class AllianceCommand(commands.Cog):
         commandString = f"/alliance info {alliance}"
 
         try:
-            await inter.response.defer()
-            url = f'https://emctoolkit.vercel.app/api/aurora/alliances/{alliance}'
-            allianceInfo = requests.get(url=url).json()
+            allianceInfo = await Lookup.lookup(endpoint='alliance',name=alliance,server='aurora')
 
-            members = ", ".join(allianceInfo.get("nations", ["None"]))
 
             embed = Embeds.embed_builder(
-                title=f"{allianceInfo['tag']} {allianceInfo['name']}",
+                title=f'Alliance info about {alliance}',
                 description=allianceInfo["description"],
-                footer=commandString,
+                footer='made by charis_k',
                 author=inter.author
             )
 
-            embed.add_field(name="Leader/s", value=allianceInfo["leader"], inline=True)
-            embed.add_field(name="Members", value=members, inline=False)
+            embed.add_field(name="Leader/s", value=allianceInfo["leaderName"], inline=True)
+            embed.add_field(name="Members", value=allianceInfo['nations'], inline=False)
             embed.add_field(name="Towns", value=allianceInfo["towns"], inline=True)
+            embed.add_field(name='Residents',value=allianceInfo['residents'],inline=True)
+            embed.add_field(name='Online',value=allianceInfo['online'],inline=True)
+            embed.add_field(name='Discord invite',value=allianceInfo['discordInvite'],inline=True)
+            embed.add_field(name='Type',value=allianceInfo['type'],inline=True)
 
             await inter.edit_original_message(embed=embed)
 
         except Exception as e:
             embed = Embeds.error_embed(
                 value=e,
-                footer=commandString
+                footer='made by charis_k'
             )
 
             await inter.response.send_message(embed=embed)
