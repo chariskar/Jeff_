@@ -18,9 +18,9 @@ class NationCommand(commands.Cog):
     async def search(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str = "random",
-            server: str = "aurora"
+            nation: str = commands.param(name='nation',default='Jefferson')
     ):
+        server = 'aurora'
         """Retrieve and display general information about a nation."""
         commandString = f"/nation search nation: {nation} server: {server}"
 
@@ -83,9 +83,10 @@ class NationCommand(commands.Cog):
     async def reslist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str,
-            server: str = "aurora"
+            nation: str = commands.param(name='nation',default='Jefferson')
     ):
+        server: str = "aurora"
+
         """Retrieve and display the list of residents in a nation."""
         commandString = f"/nation reslist nation: {nation} server: {server}"
 
@@ -119,9 +120,10 @@ class NationCommand(commands.Cog):
     async def ranklist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str,
-            server: str = "aurora"
+            nation: str = commands.param(name='nation',default='Jefferson')
     ):
+        server: str = "aurora"
+
         """Retrieve and display the list of ranked residents in a nation."""
         commandString = f"/nation ranklist nation: {nation} server: {server}"
 
@@ -160,9 +162,10 @@ class NationCommand(commands.Cog):
     async def allylist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str,
-            server: str = "aurora"
+            nation: str = commands.param(name='nation',default='Jefferson')
     ):
+        server: str = "aurora"
+
         """Retrieve and display the list of allies of a nation."""
         commandString = f"/nation allylist nation: {nation} server: {server}"
 
@@ -203,9 +206,10 @@ class NationCommand(commands.Cog):
     async def enemylist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str,
-            server: str = "aurora"
+            nation: str = commands.param(name='nation',default='Jefferson')
     ):
+        server: str = "aurora"
+
         """Retrieve and display the list of enemies of a nation."""
         commandString = f"/nation enemylist nation: {nation} server: {server}"
 
@@ -246,9 +250,10 @@ class NationCommand(commands.Cog):
     async def townlist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str,
-            server: str = "aurora"
+            nation: str = commands.param(name='nation',default='Jefferson')
     ):
+        server: str = "aurora"
+
         """Retrieve and display the list of towns in a nation."""
         commandString = f"/nation townlist nation: {nation} server: {server}"
 
@@ -281,9 +286,10 @@ class NationCommand(commands.Cog):
     async def unallied(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str,
-            server: str = "aurora"
+            nation: str = commands.param(name='nation',default='Jefferson')
     ):
+        server: str = "aurora"
+
         """Retrieve and display the list of nations that the specified nation hasn't allied yet."""
         commandString = f"/nation unallied nation: {nation} server: {server}"
 

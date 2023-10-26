@@ -21,8 +21,9 @@ class ResCommand(commands.Cog):
         self,
         inter: disnake.ApplicationCommandInteraction,
         username: str = commands.Param(description="Resident's username, type 'random' for a random choice"),
-        server: str = commands.Param(description="Server name, defaults to Aurora", default="aurora", choices=["aurora"]),
     ):
+        server: str = "aurora"
+
         commandString = f"/res search username:{username} server:{server}"
         try:
             if username.lower() == "random":
@@ -102,8 +103,9 @@ class ResCommand(commands.Cog):
         self,
         inter: disnake.ApplicationCommandInteraction,
         username: str = commands.Param(description="Resident's username"),
-        server: str = commands.Param(description="Server name, defaults to Aurora", default="aurora", choices=["aurora"]),
     ):
+        server: str = "aurora"
+
         commandString = f"/res friendlist username:{username} server:{server}"
         await inter.response.defer()
         try:

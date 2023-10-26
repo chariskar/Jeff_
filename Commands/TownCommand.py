@@ -8,7 +8,7 @@ class TownCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.footer = 'made by charis_k'
-
+    choices = ['/t join fort elko', '/t join Redwood_City', '/t join Lost_Coast']
     @commands.slash_command()
     async def town(self, inter:disnake.ApplicationCommandInteraction):
         await inter.send(f'this is the main /town command use subcommands')
@@ -17,32 +17,48 @@ class TownCommand(commands.Cog):
     async def search(
         self,
         inter: disnake.ApplicationCommandInteraction,
-        town: str = commands.Param(
-            description="Town's name, type 'random' for a random choice"
-        ),
-        server: str = commands.Param(
-            description="Server name, defaults to Aurora",
-            default="aurora",
-            choices=["aurora"]
-        )
+        town: str = commands.Param(description="Town's name",default='')
+
     ):
-        commandString = f"/town search town: {town} server: {server}"
-
+        server: str = "aurora"
         try:
-            if town == "random":
-                allTownsLookup = await Utils.Lookup.lookup(server, endpoint="towns")
-                town = random.choice(allTownsLookup["allTowns"])
-            townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name=town)
+            if town == '' or 'default':
+                num = random.randint(1,3)
+                try:
+                    if num == 1:
+                        townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name='Fort_Elko')
+                    elif num == 2:
+                        townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name='Lost_Coast')
+                    elif num == 3:
+                        townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name='Redwood_City')
 
+                except Exception as e:
+                    embed = Utils.Embeds.error_embed(
+                        value=f'Error is {e}',
+                        footer=self.footer
+                    )
+                    await inter.send(embed=embed)
+                    return
+            else:
+                try:
+                    townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name=town)
+                except Exception as e:
+                    embed = Utils.Embeds.error_embed(
+                        value=f'Error is {e}',
+                        footer=self.footer
+                    )
+                    await inter.send(embed=embed)
+                    return
         except Exception as e:
             embed = Utils.Embeds.error_embed(
                 value=f'Error is {e}',
-                type="userError",
                 footer=self.footer
             )
-            await inter.response.send_message(embed=embed, ephemeral=True)
+            await inter.send(embed=embed)
             return
 
+
+        commandString = f"/town search town: {town} server: {server}"
         try:
             try:
                 locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={townsLookup['spawn']['x']}&z={townsLookup['spawn']['z']}"
@@ -103,26 +119,24 @@ class TownCommand(commands.Cog):
                 inline=True
             )
 
-            await inter.response.send_message(embed=embed, ephemeral=False)
+            await inter.send(embed=embed)
 
         except Exception as e:
             embed = Utils.Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=commandString
             )
-            await inter.response.send_message(embed=embed, ephemeral=True)
+            await inter.send(embed=embed)
 
     @town.sub_command(description="View all the residents of a specified town")
     async def reslist(
         self,
         inter: disnake.ApplicationCommandInteraction,
-        town: str = commands.Param(description="Town's name"),
-        server: str = commands.Param(
-            description="Server name, defaults to Aurora",
-            default="aurora",
-            choices=["aurora"]
-        )
+        town: str = commands.Param(description="Town's name",default=random.choice(choices)),
+
     ):
+        server: str = "aurora"
+
         commandString = f"/town reslist town: {town} server: {server}"
         await inter.response.defer()
         try:
@@ -161,13 +175,10 @@ class TownCommand(commands.Cog):
     async def ranklist(
         self,
         inter: disnake.ApplicationCommandInteraction,
-        town: str = commands.Param(description="Town's name"),
-        server: str = commands.Param(
-            description="Server name, defaults to Aurora",
-            default="aurora",
-            choices=["aurora"]
-        )
+        town: str = commands.Param(description="Town's name",default=random.choice(choices)),
     ):
+        server: str = "aurora"
+
         commandString = f"/town ranklist town: {town} server: {server}"
         await inter.response.defer()
         try:
@@ -219,13 +230,11 @@ class TownCommand(commands.Cog):
     async def outlawlist(
         self,
         inter: disnake.ApplicationCommandInteraction,
-        town: str = commands.Param(description="Town's name"),
-        server: str = commands.Param(
-            description="Server name, defaults to Aurora",
-            default="aurora",
-            choices=["aurora"]
-        )
+        town: str = commands.Param(description="Town's name",default=random.choice(choices)),
+
     ):
+        server: str = "aurora"
+
         commandString = f"/town outlawlist town: {town} server: {server}"
         await inter.response.defer()
         try:

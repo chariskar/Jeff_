@@ -14,7 +14,7 @@ class devcommand(commands.Cog):
         self.bot = bot
         self.timezone = pytz.timezone('Europe/Athens')
         self.time = datetime.datetime.now(self.timezone)
-        self.cache = Lookup.cache
+
 
     @commands.slash_command(description='Restart the bot')
     async def restart(self, inter: disnake.ApplicationCommandInteraction):
@@ -85,7 +85,7 @@ class devcommand(commands.Cog):
 
         await inter.edit_original_response(embed=embed)
 
-    @commands.slash_command(description='Show some important info about the bots cache')
+    ''''@commands.slash_command(description='Show some important info about the bots cache')
     async def cache_show(self,inter: disnake.ApplicationCommandInteraction):
         await inter.response.defer()
         try:
@@ -100,8 +100,30 @@ class devcommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
         except Exception as e:
             embed = Utils.Embeds.error_embed(e,footer='made by charis_k')
-            await inter.edit_original_response(embed=embed)
+            await inter.edit_original_response(embed=embed)'''
+'''
+    @commands.slash_command(description='clear the bots cache')
+    async def clear_cahce(self, inter: disnake.ApplicationCommandInteraction):
+        inter.response.defer()
+        guild = inter.guild
+        if inter.guild_id == 1131117400985706538:
+            role_id = 1131896754070093954
 
+        elif inter.guild_id == 1038964213961457674:
+            role_id = 1135853311313068082
+        else:
+            role_id = 1131896754070093954
+        member = inter.author
+        role = disnake.utils.get(guild.roles, id=role_id)
 
+        if role in member.roles:
+            embed = Utils.Embeds.embed_builder('Cache cleared', author=inter.author)
+            embed.add_field(name='Started at ',value=self.time)
+            cache = Lookup.cache.currsize()
+            await Lookup.clear_chace()
+            print(f'Cleared cache it was {cache}')
+        else:
+            await inter.send(f'{inter.author} you are not a dev')
+'''
 def setup(bot):
     bot.add_cog(devcommand(bot))

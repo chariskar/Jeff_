@@ -6,6 +6,7 @@ from disnake.ext.commands import InteractionBot
 
 bot: InteractionBot = commands.InteractionBot()
 
+
 @bot.event
 async def on_ready():
     await bot.change_presence(activity=disnake.Game(name=f"operating in {len(bot.guilds)}"))
@@ -30,6 +31,8 @@ bot.load_extension("Commands.weather")
 bot.load_extension("Commands.devcommands")
 
 try:
-    token = os.environ.get('TOKEN')
+    token = 'MTEyMTc1MTQwMDI5NzI3OTU0OQ.GU5r-7.MXLOqz5xah8yl-wWOzuNkzfdHfVr0ONys9wu1k'
+    bot.run(token)
+    print(f'Logged in as {bot.user}')
 except Exception as e:
     raise e
