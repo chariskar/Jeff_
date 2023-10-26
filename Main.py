@@ -31,7 +31,7 @@ bot.load_extension("Commands.weather")
 bot.load_extension("Commands.devcommands")
 
 try:
-    token = 'MTEyMTc1MTQwMDI5NzI3OTU0OQ.GU5r-7.MXLOqz5xah8yl-wWOzuNkzfdHfVr0ONys9wu1k'
+    token = os.environ.get('TOKEN.env')
     bot.run(token)
     print(f'Logged in as {bot.user}')
 except Exception as e:
