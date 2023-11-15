@@ -1,37 +1,50 @@
 import disnake
-from disnake.ext import commands
+import dotenv
+from disnake.ext import commands, tasks
 import os
-
+from dotenv import load_dotenv
 from disnake.ext.commands import InteractionBot
+import random
 
 bot: InteractionBot = commands.InteractionBot()
+load_dotenv()
+activities = [
+    disnake.Game(name="play.earthmc.net"),
+    disnake.Activity(type=disnake.ActivityType.listening, name="to your commands"),
+    disnake.Activity(type=disnake.ActivityType.watching, name="ALL OF YOU"),
+    disnake.Game(name='I have a brother Jefferson ModMail')
+]
+
+
+@tasks.loop(minutes=5)
+async def change_status():
+    global activity
+    activity = random.choice(activities)
+    await bot.change_presence(activity=activity)
 
 
 @bot.event
 async def on_ready():
-    await bot.change_presence(activity=disnake.Game(name=f"operating in {len(bot.guilds)}"))
-
+    change_status.start()
     print(f"Logged in as {bot.user}")
     print(f"Operating in {len(bot.guilds)} guild/s")
-    print(f'Presence is playing : play.earthmc.net')
-    print("Made by charis_k")
+    print(f'Presence is playing : {activity}')
 
 # bot.load_extension loads a file from another directory in this case the Commands directory it loads all the scripts
 
-bot.load_extension("Commands.ServerCommand")
-bot.load_extension("Commands.ResCommand")
-bot.load_extension("Commands.TownCommand")
-bot.load_extension("Commands.NationCommand")
-bot.load_extension("Commands.ModerationCommands")
-# bot.load_extension("Commands.RoleManaging")
-# bot.load_extension("Commands.LevelingSystem")
-# bot.load_extension("Commands.VotingSystem")
-bot.load_extension("Commands.weather")
-# bot.load_extension("Commands.AllianceCommand")
-bot.load_extension("Commands.devcommands")
+
+
+
+for file in os.listdir('Commands'):
+    if file.endswith('py'):
+        bot.load_extension(f'Commands.{file[:-3]}')
+'''try:
+    subprocess.run('main.py')
+except Exception as e:
+    raise e'''
 
 try:
-    token = os.environ.get('TOKEN.env')
+    token: str = dotenv.get_key('TOKEN.env', key_to_get='TOKEN')
     bot.run(token)
     print(f'Logged in as {bot.user}')
 except Exception as e:

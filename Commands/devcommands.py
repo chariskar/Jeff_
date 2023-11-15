@@ -4,126 +4,199 @@ from disnake.ext import commands
 import subprocess
 import aiohttp
 import time
-import Utils.Utils as Utils
-from Utils.Utils import *
+from Utils.Lookup import Lookup
+from Utils.Embeds import Embeds
 import sys
 import pytz
+
 
 class devcommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.footer = 'made by charis_k'
         self.timezone = pytz.timezone('Europe/Athens')
         self.time = datetime.datetime.now(self.timezone)
-
+        self.owner_id = 927581845787402240
 
     @commands.slash_command(description='Restart the bot')
-    async def restart(self, inter: disnake.ApplicationCommandInteraction):
-        member = inter.author
-        guild = inter.guild
-        if inter.guild_id == 1131117400985706538:
-            role_id = 1131896754070093954
+    async def restart(self,
+                      inter: disnake.ApplicationCommandInteraction,
+                      reason: str = commands.param(name='reason'),
 
-        elif inter.guild_id == 1038964213961457674:
-            role_id = 1135853311313068082
+                      ):
+        try:
+            await inter.response.defer()
+            member = inter.author
+            if member.id == self.owner_id:
+                embed = Embeds.embed_builder('Restarting', author=inter.author, footer=self.footer)
+                embed.add_field(name='reason', value=reason, inline=True)
+                embed.add_field(name='Program was run at', value=self.time, inline=True)
 
-        else:
-            role_id = 1131896754070093954
-        role = disnake.utils.get(guild.roles, id=role_id)
+                await inter.edit_original_response(embed=embed)
 
-        if role in member.roles:
-            embed = Utils.Embeds.embed_builder('Restarting', author=inter.author)
-            embed.add_field(name='Program was run at', value=self.time, inline=True)
+                python = sys.executable
+                subprocess.run([python] + sys.argv)
+            else:
+                embed = Embeds.embed_builder(
+                    f'{inter.author} you cant restart the bot you are not a dev',
+                    author=inter.author,
+                    footer=self.footer
+                )
+                embed.add_field(name='Program was run at', value=self.time, inline=True)
+                await inter.edit_original_response(embed=embed)
+
+        except Exception as e:
+            embed = Embeds.error_embed(
+                value=f'Error is {e}',
+                footer=self.footer
+            )
             await inter.edit_original_response(embed=embed)
 
-            python = sys.executable
-            subprocess.run([python] + sys.argv)
-        else:
-            await inter.send(f"{member.display_name}, you do not have the required role.")
-
-    async def get_discord_api_latency(self):
+    @staticmethod
+    async def get_discord_api_latency():
         async with aiohttp.ClientSession() as session:
             start_time = time.time()
-            async with session.get('https://discord.com/api/v10/gateway') as response:
+            async with session.get('https://discord.com/api/v10/gateway'):
                 end_time = time.time()
                 latency = (end_time - start_time) * 1000
                 return latency
 
     @commands.slash_command(description='Stop the bot')
-    async def stop(self, inter: disnake.ApplicationCommandInteraction):
-        await inter.response.defer()
-        guild = inter.guild
-        if inter.guild_id == 1131117400985706538:
-            role_id = 1131896754070093954
+    async def stop(
+            self,
+            inter: disnake.ApplicationCommandInteraction,
+            reason: str = commands.param(name='reason')):
+        try:
+            await inter.response.defer()
 
-        elif inter.guild_id == 1038964213961457674:
-            role_id = 1135853311313068082
-        else:
-            role_id = 1131896754070093954
+            member = inter.author
 
+            if member.id == self.owner_id:
+                embed = Embeds.embed_builder(
+                    'Stopping',
+                    author=inter.author,
+                    footer=self.footer
+                )
+                embed.add_field(name='reason', value=reason, inline=True)
 
-        member = inter.author
-        role = disnake.utils.get(guild.roles, id=role_id)
+                embed.add_field(name='Program was run at', value=self.time, inline=True)
+                await inter.edit_original_response(embed=embed)
+                print(f'The reason to close the bot was f{reason}')
+                exit(code=1)
+            else:
+                embed = Embeds.embed_builder(
+                    f'{inter.author} you cant stop the bot you are not a dev',
+                    author=inter.author,
+                    footer=self.footer
+                )
+                embed.add_field(name='Program was run at', value=self.time, inline=True)
+                await inter.edit_original_response(embed=embed)
 
-        if role in member.roles:
-            embed = Utils.Embeds.embed_builder('Stopping', author=inter.author)
-            embed.add_field(name='Program was run at', value=self.time, inline=True)
+        except Exception as e:
+            embed = Embeds.error_embed(
+                value=f'Error is {e}',
+                footer=self.footer
+            )
             await inter.edit_original_response(embed=embed)
-            exit(code=1)
-        else:
-            await inter.send(f"{member.display_name}, you do not have the required role.")
 
     @commands.slash_command(description='The bots ping')
-    async def ping(self, inter: disnake.ApplicationCommandInteraction):
-        await inter.response.defer()
-
-        bot_latency = self.bot.latency * 1000
-        api_latency = await self.get_discord_api_latency()
-        embed = Utils.Embeds.embed_builder('Pong!.', author=inter.author)
-        embed.add_field(name='Bot latency is', value=f'{bot_latency:.2f} ms', inline=True)
-        embed.add_field(name='Discord API latency is', value=f'{api_latency:.2f} ms', inline=True)
-        embed.add_field(name=f'Program was run at', value=self.time, inline=True)
-
-        await inter.edit_original_response(embed=embed)
-
-    ''''@commands.slash_command(description='Show some important info about the bots cache')
-    async def cache_show(self,inter: disnake.ApplicationCommandInteraction):
-        await inter.response.defer()
+    async def ping(
+            self,
+            inter: disnake.ApplicationCommandInteraction):
         try:
-            embed = Utils.Embeds.embed_builder('Cache!', author=inter.author)
-            maxsize =  self.cache.maxsize
-            maxtime = self.cache.expire
-            currtime = self.cache.timer
-            embed.add_field(name='Max size',value=maxsize,inline=True)
-            embed.add_field(name='Current size',value=len(self.cache),inline=True)
-            embed.add_field(name='Max time (in ms)',value=maxtime,inline=True)
-            embed.add_field(name='current time again in ms',value=currtime,inline=True)
+            await inter.response.defer()
+
+            bot_latency = self.bot.latency * 1000
+            api_latency = await self.get_discord_api_latency()
+            embed = Embeds.embed_builder(
+                'Pong!.',
+                author=inter.author,
+                footer=self.footer
+            )
+            embed.add_field(name='Bot latency is', value=f'{bot_latency:.2f} ms', inline=True)
+            embed.add_field(name='Discord API latency is', value=f'{api_latency:.2f} ms', inline=True)
+            embed.add_field(name=f'Program was run at', value=self.time, inline=True)
+
             await inter.edit_original_response(embed=embed)
         except Exception as e:
-            embed = Utils.Embeds.error_embed(e,footer='made by charis_k')
-            await inter.edit_original_response(embed=embed)'''
-'''
-    @commands.slash_command(description='clear the bots cache')
-    async def clear_cahce(self, inter: disnake.ApplicationCommandInteraction):
-        inter.response.defer()
-        guild = inter.guild
-        if inter.guild_id == 1131117400985706538:
-            role_id = 1131896754070093954
+            embed = Embeds.error_embed(
+                value=f'Error is {e}',
+                footer=self.footer
+            )
+            await inter.edit_original_response(embed=embed)
 
-        elif inter.guild_id == 1038964213961457674:
-            role_id = 1135853311313068082
-        else:
-            role_id = 1131896754070093954
-        member = inter.author
-        role = disnake.utils.get(guild.roles, id=role_id)
+    @commands.slash_command(description='clear the cache of the bot')
+    async def cache_clear(
+            self,
+            inter: disnake.ApplicationCommandInteraction,
+            reason: str = commands.param(name='reason', default=None)
+    ):
+        try:
+            await inter.response.defer()
 
-        if role in member.roles:
-            embed = Utils.Embeds.embed_builder('Cache cleared', author=inter.author)
-            embed.add_field(name='Started at ',value=self.time)
-            cache = Lookup.cache.currsize()
-            await Lookup.clear_chace()
-            print(f'Cleared cache it was {cache}')
-        else:
-            await inter.send(f'{inter.author} you are not a dev')
-'''
+            member = inter.author
+            if member.id == self.owner_id:
+                embed = Embeds.embed_builder(
+                    title='Clearing cache',
+                    footer=self.footer,
+                    author=inter.author)
+                Lookup.clear_cache()
+
+                print(f'Cache cleared {reason}')
+                embed.add_field(name='reason', value=reason, inline=True)
+
+                embed.add_field(name='Program was run at', value=self.time, inline=True)
+
+                await inter.edit_original_response(embed=embed)
+            else:
+                await inter.send(f"{member.display_name}, you do not have the required role.")
+
+        except Exception as e:
+            embed = Embeds.error_embed(
+                value=f'Error is {e}',
+                footer=self.footer
+            )
+            await inter.edit_original_response(embed=embed)
+
+    @commands.slash_command(description='log something to the console')
+    async def long_to_console(
+            self,
+            inter: disnake.ApplicationCommandInteraction,
+            reason: str = commands.param(name='reason', default=None)
+    ):
+        try:
+            await inter.response.defer()
+
+            member = inter.author
+            if member.id == self.owner_id:
+                print(f'Logged f{reason}')
+                embed = Embeds.embed_builder(
+                    f'{inter.author} Logged',
+                    author=inter.author,
+                    footer=self.footer
+                )
+                embed.add_field(name='reason', value=reason, inline=True)
+                embed.add_field(name='Program was run at', value=self.time, inline=True)
+
+                await inter.edit_original_response(embed=embed)
+
+            else:
+                embed = Embeds.embed_builder(
+                    f'{inter.author} you cant log to the bots console',
+                    author=inter.author,
+                    footer=self.footer
+                )
+                embed.add_field(name='Program was run at', value=self.time, inline=True)
+                await inter.edit_original_response(embed=embed)
+
+
+        except Exception as e:
+            embed = Embeds.error_embed(
+                value=f'Error is {e}',
+                footer=self.footer
+            )
+            await inter.edit_original_response(embed=embed)
+
+
 def setup(bot):
     bot.add_cog(devcommand(bot))

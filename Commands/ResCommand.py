@@ -1,8 +1,11 @@
 import random
 import disnake
 from disnake.ext import commands
-import Utils.Utils as Utils
-from Utils.Utils import *
+from Utils.Embeds import Embeds
+from Utils.Lookup import Lookup
+from Utils.CommandTools import CommandTools
+
+
 
 class ResCommand(commands.Cog):
     def __init__(self, bot):
@@ -12,7 +15,8 @@ class ResCommand(commands.Cog):
     @commands.slash_command()
     async def res(
         self,
-        inter
+        inter: disnake.ApplicationCommandInteraction,
+
     ):
         pass
 
@@ -24,17 +28,16 @@ class ResCommand(commands.Cog):
     ):
         server: str = "aurora"
 
-        commandString = f"/res search username:{username} server:{server}"
         try:
             if username.lower() == "random":
-                allResidentsLookup = Utils.Lookup.lookup(server, endpoint="residents")
+                allResidentsLookup = Lookup.lookup(server, endpoint="residents")
                 username = random.choice(allResidentsLookup["allResidents"])
 
-            residentsLookup = await Utils.Lookup.lookup(server, endpoint="residents", name=username)
+            residentsLookup = await Lookup.lookup(server, endpoint="residents", name=username)
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
-                type="userError",
+
                 footer=self.footer,
             )
             await inter.send(embed=embed, ephemeral=True)
@@ -54,12 +57,11 @@ class ResCommand(commands.Cog):
             joinedTownAt = f"<t:{round(residentsLookup['timestamps']['joinedTownAt'] / 1000)}:R>" if town else "N/A"
             nation = residentsLookup["affiliation"].get("nation")
 
-            rnaoPermsList = Utils.CommandTools.rnao_perms(json=residentsLookup)
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{fullName}`",
                 author=inter.author,
-                footer=commandString,
+                footer=self.footer,
                 thumbnail=f"https://mc-heads.net/head/{residentsLookup['strings']['username']}",
             )
 
@@ -71,27 +73,17 @@ class ResCommand(commands.Cog):
             embed.add_field(name="Last Online", value=lastOnline, inline=True)
             embed.add_field(name="Joined Town", value=joinedTownAt, inline=True)
 
-            embed.add_field(
-                name="Perms",
-                value=f"• `Build` — {rnaoPermsList[0]}\n• `Destroy` — {rnaoPermsList[1]}\n• `Switch` — {rnaoPermsList[2]}\n• `ItemUse` — {rnaoPermsList[3]}",
-                inline=True,
-            )
-            embed.add_field(
-                name="Flags",
-                value=f"• `PvP` — {residentsLookup['perms']['flagPerms']['pvp']}\n• `Explosions` — {residentsLookup['perms']['flagPerms']['explosion']}\n• `Firespread` — {residentsLookup['perms']['flagPerms']['fire']}\n• `Mob Spawns` — {residentsLookup['perms']['flagPerms']['mobs']}",
-                inline=True,
-            )
 
             for rankType in residentsLookup["ranks"]:
                 if len(residentsLookup["ranks"][rankType]) != 0:
-                    rankString = Utils.CommandTools.list_to_string(list=residentsLookup["ranks"][rankType])
+                    rankString = CommandTools.list_to_string(residentsLookup["ranks"][rankType])
                     name = "Town Ranks" if rankType == "townRanks" else "Nation Ranks"
                     embed.add_field(name=name, value=rankString.title(), inline=False)
 
             await inter.send(embed=embed, ephemeral=False)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
@@ -105,13 +97,10 @@ class ResCommand(commands.Cog):
         username: str = commands.Param(description="Resident's username"),
     ):
         server: str = "aurora"
-
-        commandString = f"/res friendlist username:{username} server:{server}"
-        await inter.response.defer()
         try:
-            residentsLookup = Utils.Lookup.lookup(server.lower(), endpoint="residents", name=username)
+            residentsLookup = Lookup.lookup(server.lower(), endpoint="residents", name=username)
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 type="userError",
                 footer=self.footer,
@@ -120,14 +109,14 @@ class ResCommand(commands.Cog):
             return
 
         try:
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{residentsLookup['strings']['username']}'s Friends",
                 footer=self.footer,
                 author=inter.author,
             )
 
             if residentsLookup["friends"]:
-                friendsString = Utils.CommandTools.list_to_string(list=residentsLookup["friends"])
+                friendsString = CommandTools.list_to_string(residentsLookup["friends"])
                 embed.add_field(name="Friends", value=f"```{friendsString[:1018]}```", inline=True)
             else:
                 embed.add_field(name="Friends", value=f"{residentsLookup['strings']['username']} has no friends :(", inline=True)
@@ -135,7 +124,7 @@ class ResCommand(commands.Cog):
             await inter.send(embed=embed, ephemeral=False)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )

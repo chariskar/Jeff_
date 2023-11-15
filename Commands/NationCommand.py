@@ -1,8 +1,10 @@
 import random
 import disnake
 from disnake.ext import commands
-import Utils.Utils as Utils
-from Utils.Utils import *
+from Utils.Lookup import Lookup
+from Utils.Embeds import Embeds
+from Utils.CommandTools import CommandTools
+
 
 
 class NationCommand(commands.Cog):
@@ -14,27 +16,30 @@ class NationCommand(commands.Cog):
     async def nation(self, inter: disnake.ApplicationCommandInteraction):
         pass
 
+
     @nation.sub_command(description="Retrieve and display general information about a nation.")
     async def search(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str = commands.param(name='nation',default='Jefferson')
+            nation: str = commands.param(name='nation', default='Jefferson')
     ):
+        await inter.response.defer()
+
         server = 'aurora'
         """Retrieve and display general information about a nation."""
-        commandString = f"/nation search nation: {nation} server: {server}"
 
-        await inter.response.defer()
 
         try:
             if nation.lower() == "random":
-                allNationsLookup = await Utils.Lookup.lookup(server, endpoint="nations")
+                allNationsLookup = await Lookup.lookup(server, endpoint="nations")
                 nation = random.choice(allNationsLookup["allNations"])
 
-            nationsLookup = await Utils.Lookup.lookup(server, endpoint="nations", name=nation)
+            nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
             locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={nationsLookup['spawn']['x']}&z={nationsLookup['spawn']['z']}"
 
-            embed = Utils.Embeds.embed_builder(
+
+
+            embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}`",
                 description=nationsLookup["strings"]["board"],
                 footer=self.footer,
@@ -46,6 +51,12 @@ class NationCommand(commands.Cog):
             embed.add_field(
                 name="Location",
                 value=f"[{int(round(nationsLookup['spawn']['x'], 0))}, {int(round(nationsLookup['spawn']['z'], 0))}]({locationUrl})",
+                inline=True
+            )
+
+            embed.add_field(
+                name='Nation Bonus',
+                value=int(CommandTools.claim_bonus(nationsLookup['stats']['numResidents'])),
                 inline=True
             )
 
@@ -72,7 +83,7 @@ class NationCommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
@@ -83,32 +94,32 @@ class NationCommand(commands.Cog):
     async def reslist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str = commands.param(name='nation',default='Jefferson')
+            nation: str = commands.param(name='nation', default='Jefferson')
     ):
+        await inter.response.defer()
+
         server: str = "aurora"
 
         """Retrieve and display the list of residents in a nation."""
-        commandString = f"/nation reslist nation: {nation} server: {server}"
 
-        await inter.response.defer()
 
         try:
-            nationsLookup = await Utils.Lookup.lookup(server, endpoint="nations", name=nation)
+            nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Residents`",
                 footer=self.footer,
                 author=inter.author
             )
 
-            residentsString = Utils.CommandTools.list_to_string(list=nationsLookup["residents"])
+            residentsString = CommandTools.list_to_string(nationsLookup["residents"])
 
             embed.add_field(name="Residents", value=f"```{residentsString[:1018]}```", inline=True)
 
             await inter.edit_original_response(embed=embed)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer,
 
@@ -120,19 +131,19 @@ class NationCommand(commands.Cog):
     async def ranklist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str = commands.param(name='nation',default='Jefferson')
+            nation: str = commands.param(name='nation', default='Jefferson')
     ):
+        await inter.response.defer()
+
         server: str = "aurora"
 
         """Retrieve and display the list of ranked residents in a nation."""
-        commandString = f"/nation ranklist nation: {nation} server: {server}"
 
-        await inter.response.defer()
 
         try:
-            nationsLookup = await Utils.Lookup.lookup(server, endpoint="nations", name=nation)
+            nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Ranked Residents`",
                 footer=self.footer,
                 author=inter.author
@@ -140,7 +151,7 @@ class NationCommand(commands.Cog):
 
             for rank in nationsLookup["ranks"]:
                 if len(nationsLookup["ranks"][rank]) != 0:
-                    rankString = Utils.CommandTools.list_to_string(list=nationsLookup["ranks"][rank])
+                    rankString = CommandTools.list_to_string(nationsLookup["ranks"][rank])
 
                     embed.add_field(name=rank.capitalize(), value=f"`{rankString[:1022]}`", inline=True)
 
@@ -150,38 +161,38 @@ class NationCommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
 
-            await inter.edit_original_response(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
 
     @nation.sub_command(description="Retrieve and display the list of allies of a nation.")
     async def allylist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str = commands.param(name='nation',default='Jefferson')
+            nation: str = commands.param(name='nation', default='Jefferson')
     ):
+        await inter.response.defer()
+
         server: str = "aurora"
 
         """Retrieve and display the list of allies of a nation."""
-        commandString = f"/nation allylist nation: {nation} server: {server}"
 
-        await inter.response.defer()
 
         try:
-            nationsLookup = await Utils.Lookup.lookup(server, endpoint="nations", name=nation)
+            nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Allies`",
                 footer=self.footer,
                 author=inter.author
             )
 
             if len(nationsLookup["allies"]) != 0:
-                alliesString = Utils.CommandTools.list_to_string(list=nationsLookup["allies"])
+                alliesString = CommandTools.list_to_string(nationsLookup["allies"])
 
                 embed.add_field(name="Allies", value=f"```{alliesString[:1018]}```", inline=True)
 
@@ -195,37 +206,37 @@ class NationCommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
 
-            await inter.edit_original_response(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
     @nation.sub_command(description="Retrieve and display the list of enemies of a nation.")
     async def enemylist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str = commands.param(name='nation',default='Jefferson')
+            nation: str = commands.param(name='nation', default='Jefferson')
     ):
+        await inter.response.defer()
+
         server: str = "aurora"
 
         """Retrieve and display the list of enemies of a nation."""
-        commandString = f"/nation enemylist nation: {nation} server: {server}"
 
-        await inter.response.defer()
 
         try:
-            nationsLookup = await Utils.Lookup.lookup(server, endpoint="nations", name=nation)
+            nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Enemies`",
                 footer=self.footer,
                 author=inter.author
             )
 
             if len(nationsLookup["enemies"]) != 0:
-                enemiesString = Utils.CommandTools.list_to_string(list=nationsLookup["enemies"])
+                enemiesString = CommandTools.list_to_string(nationsLookup["enemies"])
 
                 embed.add_field(name="Enemies", value=f"```{enemiesString[:1018]}```", inline=True)
 
@@ -239,67 +250,67 @@ class NationCommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
 
-            await inter.edit_original_response(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
     @nation.sub_command(description="Retrieve and display the list of towns in a nation.")
     async def townlist(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str = commands.param(name='nation',default='Jefferson')
+            nation: str = commands.param(name='nation', default='Jefferson')
     ):
+        await inter.response.defer()
+
         server: str = "aurora"
 
         """Retrieve and display the list of towns in a nation."""
-        commandString = f"/nation townlist nation: {nation} server: {server}"
 
-        await inter.response.defer()
 
         try:
-            nationsLookup = await Utils.Lookup.lookup(server, endpoint="nations", name=nation)
+            nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Towns`",
                 footer=self.footer,
                 author=inter.author
             )
 
-            townsString = Utils.CommandTools.list_to_string(list=nationsLookup["towns"])
+            townsString = CommandTools.list_to_string(nationsLookup["towns"])
 
             embed.add_field(name="Towns", value=f"```{townsString[:1018]}```", inline=True)
 
             await inter.edit_original_response(embed=embed)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
 
-            await inter.edit_original_response(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
     @nation.sub_command(description="Retrieve and display the list of nations that the specified nation hasn't allied yet.")
     async def unallied(
             self,
             inter: disnake.ApplicationCommandInteraction,
-            nation: str = commands.param(name='nation',default='Jefferson')
+            nation: str = commands.param(name='nation', default='Jefferson')
     ):
+        await inter.response.defer()
+
         server: str = "aurora"
 
         """Retrieve and display the list of nations that the specified nation hasn't allied yet."""
-        commandString = f"/nation unallied nation: {nation} server: {server}"
 
-        await inter.response.defer()
 
         try:
-            nationsLookup = await Utils.Lookup.lookup(server, endpoint="nations", name=nation)
-            allNationsLookup = await Utils.Lookup.lookup(server, endpoint="nations")
+            nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
+            allNationsLookup = await Lookup.lookup(server, endpoint="nations")
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Unallied Nations`",
                 footer=self.footer,
                 author=inter.author,
@@ -327,13 +338,13 @@ class NationCommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
 
                 footer=self.footer
             )
 
-            await inter.edit_original_response(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
 
 def setup(bot):

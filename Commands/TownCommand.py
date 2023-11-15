@@ -1,39 +1,46 @@
 import random
 import disnake
 from disnake.ext import commands
-import Utils.Utils as Utils
-from Utils.Utils import *
+from Utils.Embeds import Embeds
+from Utils.Lookup import Lookup
+from Utils.CommandTools import CommandTools
+
 
 class TownCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.footer = 'made by charis_k'
     choices = ['/t join fort elko', '/t join Redwood_City', '/t join Lost_Coast']
+
+
+
     @commands.slash_command()
-    async def town(self, inter:disnake.ApplicationCommandInteraction):
-        await inter.send(f'this is the main /town command use subcommands')
+    async def town(self, inter: disnake.ApplicationCommandInteraction):
+        pass
+
+
 
     @town.sub_command(description="Provides general info about a town")
     async def search(
         self,
         inter: disnake.ApplicationCommandInteraction,
-        town: str = commands.Param(description="Town's name",default='')
+        town: str = commands.Param(description="Town's name", default='')
 
     ):
         server: str = "aurora"
         try:
-            if town == '' or 'default':
-                num = random.randint(1,3)
+            if not town:
+                num = random.randint(1, 3)
                 try:
                     if num == 1:
-                        townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name='Fort_Elko')
+                        townsLookup = await Lookup.lookup(server, endpoint="towns", name='Fort_Elko')
                     elif num == 2:
-                        townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name='Lost_Coast')
+                        townsLookup = await Lookup.lookup(server, endpoint="towns", name='Lost_Coast')
                     elif num == 3:
-                        townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name='Redwood_City')
+                        townsLookup = await Lookup.lookup(server, endpoint="towns", name='Redwood_City')
 
                 except Exception as e:
-                    embed = Utils.Embeds.error_embed(
+                    embed = Embeds.error_embed(
                         value=f'Error is {e}',
                         footer=self.footer
                     )
@@ -41,16 +48,16 @@ class TownCommand(commands.Cog):
                     return
             else:
                 try:
-                    townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name=town)
+                    townsLookup = await Lookup.lookup(server, endpoint="towns", name=town)
                 except Exception as e:
-                    embed = Utils.Embeds.error_embed(
+                    embed = Embeds.error_embed(
                         value=f'Error is {e}',
                         footer=self.footer
                     )
                     await inter.send(embed=embed)
                     return
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
@@ -58,7 +65,6 @@ class TownCommand(commands.Cog):
             return
 
 
-        commandString = f"/town search town: {town} server: {server}"
         try:
             try:
                 locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={townsLookup['spawn']['x']}&z={townsLookup['spawn']['z']}"
@@ -74,12 +80,12 @@ class TownCommand(commands.Cog):
                 nation = None
                 joinedNationAt = "N/A"
 
-            rnaoPermsList = Utils.CommandTools.rnao_perms(json=townsLookup)
+            rnaoPermsList = CommandTools.rnao_perms(json=townsLookup)
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}`",
                 description=townsLookup["strings"]["board"],
-                footer=commandString,
+                footer=self.footer,
                 author=inter.author
             )
 
@@ -93,6 +99,14 @@ class TownCommand(commands.Cog):
                 value=f"{townsLookup['stats']['numTownBlocks']}/{townsLookup['stats']['maxTownBlocks']} ({townsLookup['stats']['numTownBlocks'] * 16 + 48}G)",
                 inline=True
             )
+
+            # fetch the nation the town is in
+            Nation = await Lookup.lookup(endpoint='nation', name=nation)
+            embed.add_field(
+                name=f'Nation bonus for {nation}',
+                value=CommandTools.claim_bonus(int(Nation['stats']['numResidents']))
+            )
+
             embed.add_field(name="Balance", value=f"{townsLookup['stats']['balance']}G", inline=True)
 
             embed.add_field(name="Founder", value=townsLookup["strings"]["founder"], inline=True)
@@ -122,9 +136,9 @@ class TownCommand(commands.Cog):
             await inter.send(embed=embed)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
-                footer=commandString
+                footer=self.footer
             )
             await inter.send(embed=embed)
 
@@ -132,18 +146,17 @@ class TownCommand(commands.Cog):
     async def reslist(
         self,
         inter: disnake.ApplicationCommandInteraction,
-        town: str = commands.Param(description="Town's name",default=random.choice(choices)),
+        town: str = commands.Param(description="Town's name", default=random.choice(choices)),
 
     ):
         server: str = "aurora"
 
         commandString = f"/town reslist town: {town} server: {server}"
-        await inter.response.defer()
         try:
-            townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name=town)
+            townsLookup = await Lookup.lookup(server, endpoint="towns", name=town)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 type="userError",
                 footer=commandString
@@ -152,20 +165,20 @@ class TownCommand(commands.Cog):
             return
 
         try:
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}'s Residents",
                 footer=self.footer,
                 author=inter.author
             )
 
-            residentsString = Utils.CommandTools.list_to_string(list=townsLookup["residents"])
+            residentsString = CommandTools.list_to_string(townsLookup["residents"])
 
             embed.add_field(name="Residents", value=f"```{residentsString[:1018]}```", inline=True)
 
             await inter.response.send_message(embed=embed, ephemeral=False)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
@@ -175,17 +188,16 @@ class TownCommand(commands.Cog):
     async def ranklist(
         self,
         inter: disnake.ApplicationCommandInteraction,
-        town: str = commands.Param(description="Town's name",default=random.choice(choices)),
+        town: str = commands.Param(description="Town's name", default=random.choice(choices)),
     ):
         server: str = "aurora"
 
         commandString = f"/town ranklist town: {town} server: {server}"
-        await inter.response.defer()
         try:
-            townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name=town)
+            townsLookup = await Lookup.lookup(server, endpoint="towns", name=town)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 type="userError",
                 footer=commandString
@@ -194,7 +206,7 @@ class TownCommand(commands.Cog):
             return
 
         try:
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}'s Ranked Residents",
                 footer=commandString,
                 author=inter.author
@@ -202,7 +214,7 @@ class TownCommand(commands.Cog):
 
             for rank in townsLookup["ranks"]:
                 if len(townsLookup["ranks"][rank]) != 0:
-                    rankString = Utils.CommandTools.list_to_string(list=townsLookup["ranks"][rank])
+                    rankString = CommandTools.list_to_string(townsLookup["ranks"][rank])
 
                     embed.add_field(name=rank.capitalize(), value=f"`{rankString[:1022]}`", inline=True)
 
@@ -210,7 +222,7 @@ class TownCommand(commands.Cog):
                     embed.add_field(name=rank.capitalize(), value="N/A", inline=True)
 
             if len(townsLookup["trusted"]) != 0:
-                trustedString = Utils.CommandTools.list_to_string(list=townsLookup["trusted"])
+                trustedString = CommandTools.list_to_string(townsLookup["trusted"])
 
                 embed.add_field(name="Trusted", value=f"`{trustedString[:1022]}`", inline=True)
 
@@ -220,7 +232,7 @@ class TownCommand(commands.Cog):
             await inter.response.send_message(embed=embed, ephemeral=False)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
@@ -230,34 +242,57 @@ class TownCommand(commands.Cog):
     async def outlawlist(
         self,
         inter: disnake.ApplicationCommandInteraction,
-        town: str = commands.Param(description="Town's name",default=random.choice(choices)),
+        town: str = commands.Param(description="Town's name"),
 
     ):
         server: str = "aurora"
 
-        commandString = f"/town outlawlist town: {town} server: {server}"
-        await inter.response.defer()
         try:
-            townsLookup = await Utils.Lookup.lookup(server, endpoint="towns", name=town)
+            if not town:
+                num = random.randint(1, 3)
+                try:
+                    if num == 1:
+                        townsLookup = await Lookup.lookup(server, endpoint="towns", name='Fort_Elko')
+                    elif num == 2:
+                        townsLookup = await Lookup.lookup(server, endpoint="towns", name='Lost_Coast')
+                    elif num == 3:
+                        townsLookup = await Lookup.lookup(server, endpoint="towns", name='Redwood_City')
 
+                except Exception as e:
+                    embed = Embeds.error_embed(
+                        value=f'Error is {e}',
+                        footer=self.footer
+                    )
+                    await inter.send(embed=embed)
+                    return
+            else:
+                try:
+                    townsLookup = await Lookup.lookup(server, endpoint="towns", name=town)
+                except Exception as e:
+                    embed = Embeds.error_embed(
+                        value=f'Error is {e}',
+                        footer=self.footer
+                    )
+                    await inter.send(embed=embed)
+                    return
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
-                value="Check if you wrote a parameter incorrectly or if the server is currently offline",
-                type="userError",
-                footer=commandString
+            embed = Embeds.error_embed(
+                value=f'Error is {e}',
+                footer=self.footer
             )
-            await inter.response.send_message(embed=embed, ephemeral=True)
+            await inter.send(embed=embed)
             return
 
+
         try:
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}'s Outlaws",
                 footer=self.footer,
                 author=inter.author
             )
 
             if len(townsLookup["outlaws"]) != 0:
-                outlawsString = Utils.CommandTools.list_to_string(list=townsLookup["outlaws"])
+                outlawsString = CommandTools.list_to_string(townsLookup["outlaws"])
 
                 embed.add_field(name="Outlaws", value=f"```{outlawsString[:1018]}```", inline=True)
 
@@ -267,12 +302,12 @@ class TownCommand(commands.Cog):
             await inter.response.send_message(embed=embed, ephemeral=False)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
 
+
 def setup(bot):
     bot.add_cog(TownCommand(bot))
-

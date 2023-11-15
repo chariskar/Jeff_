@@ -1,6 +1,9 @@
 import disnake
 from disnake.ext import commands
-import Utils.Utils as Utils
+from Utils.Embeds import Embeds
+from Utils.Lookup import Lookup
+from Utils.CommandTools import CommandTools
+
 
 class ServerCommand(commands.Cog):
     def __init__(self, bot):
@@ -18,16 +21,14 @@ class ServerCommand(commands.Cog):
             choices=["aurora"]
         )
     ):
-        commandString = f"/server server: {server}"
-        await inter.response.defer()
         try:
-            serverLookup = await Utils.Lookup.lookup(server)
-            allResidentsLookup = await Utils.Lookup.lookup(server, endpoint="residents")
-            allTownsLookup = await Utils.Lookup.lookup(server, endpoint="towns")
-            allNationsLookup = await Utils.Lookup.lookup(server, endpoint="nations")
+            serverLookup = await Lookup.lookup(server)
+            allResidentsLookup = await Lookup.lookup(server, endpoint="residents")
+            allTownsLookup = await Lookup.lookup(server, endpoint="towns")
+            allNationsLookup = await Lookup.lookup(server, endpoint="nations")
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
@@ -36,9 +37,9 @@ class ServerCommand(commands.Cog):
             return
 
         try:
-            weather = Utils.CommandTools.get_weather(serverLookup)
+            weather = CommandTools.get_weather(serverLookup)
 
-            embed = Utils.Embeds.embed_builder(
+            embed = Embeds.embed_builder(
                 title=f"`{server.capitalize()}`",
                 footer=self.footer,
                 author=inter.author
@@ -67,12 +68,13 @@ class ServerCommand(commands.Cog):
             await inter.send(embed=embed, ephemeral=False)
 
         except Exception as e:
-            embed = Utils.Embeds.error_embed(
+            embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 footer=self.footer
             )
 
             await inter.send(embed=embed, ephemeral=True)
+
 
 def setup(bot):
     bot.add_cog(ServerCommand(bot))

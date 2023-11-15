@@ -2,8 +2,8 @@ import disnake
 from disnake.ext import commands
 import json
 import os
-import Utils.Utils as Utils
-from Utils.Utils import *
+import Utils.CommandTools as Utils
+from Utils.CommandTools import *
 class LevelingSystem(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

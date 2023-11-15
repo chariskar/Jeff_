@@ -1,7 +1,7 @@
 import disnake
 from disnake.ext import commands
-import Utils.Utils as Utils
-from Utils.Utils import *
+import Utils.CommandTools as Utils
+from Utils.CommandTools import *
 class RoleManaging(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
