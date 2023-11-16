@@ -18,7 +18,6 @@ activities = [
 
 @tasks.loop(minutes=5)
 async def change_status():
-    global activity
     activity = random.choice(activities)
     await bot.change_presence(activity=activity)
 
@@ -27,8 +26,7 @@ async def change_status():
 async def on_ready():
     change_status.start()
     print(f"Logged in as {bot.user}")
-    print(f"Operating in {len(bot.guilds)} guild/s")
-    print(f'Presence is playing : {activity}')
+    print(f"Operating in {bot.guilds} guild/s")
 
 # bot.load_extension loads a file from another directory in this case the Commands directory it loads all the scripts
 

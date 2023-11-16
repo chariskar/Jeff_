@@ -16,8 +16,7 @@ class TownCommand(commands.Cog):
 
     @commands.slash_command()
     async def town(self, inter: disnake.ApplicationCommandInteraction):
-        pass
-
+        await inter.send('This is the main /town command there are commands like /town search , /town reslist etc')
 
 
     @town.sub_command(description="Provides general info about a town")

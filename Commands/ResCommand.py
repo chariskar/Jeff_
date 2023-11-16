@@ -18,7 +18,7 @@ class ResCommand(commands.Cog):
         inter: disnake.ApplicationCommandInteraction,
 
     ):
-        pass
+        await inter.send('This is the main /resident command there are commands lke /res search , /res friendlist etc')
 
     @res.sub_command(description="Provides general info about a resident")
     async def search(
@@ -98,7 +98,7 @@ class ResCommand(commands.Cog):
     ):
         server: str = "aurora"
         try:
-            residentsLookup = Lookup.lookup(server.lower(), endpoint="residents", name=username)
+            residentsLookup = await Lookup.lookup(server.lower(), endpoint="residents", name=username)
         except Exception as e:
             embed = Embeds.error_embed(
                 value=f'Error is {e}',

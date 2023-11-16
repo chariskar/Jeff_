@@ -14,8 +14,7 @@ class NationCommand(commands.Cog):
 
     @commands.slash_command(description="Nation-related commands.")
     async def nation(self, inter: disnake.ApplicationCommandInteraction):
-        pass
-
+        await inter.send('The main nation commands there are commands like /nation search , /nation reslist, /nation allylist etc.')
 
     @nation.sub_command(description="Retrieve and display general information about a nation.")
     async def search(
