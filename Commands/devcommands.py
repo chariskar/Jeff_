@@ -3,9 +3,9 @@ import disnake
 from disnake.ext import commands
 import subprocess
 import aiohttp
-import time
 from Utils.Lookup import Lookup
 from Utils.Embeds import Embeds
+from Utils.CommandTools import CommandTools
 import sys
 import pytz
 
@@ -52,14 +52,7 @@ class devcommand(commands.Cog):
             )
             await inter.edit_original_response(embed=embed)
 
-    @staticmethod
-    async def get_discord_api_latency():
-        async with aiohttp.ClientSession() as session:
-            start_time = time.time()
-            async with session.get('https://discord.com/api/v10/gateway'):
-                end_time = time.time()
-                latency = (end_time - start_time) * 1000
-                return latency
+
 
     @commands.slash_command(description='Stop the bot')
     async def stop(
@@ -107,7 +100,7 @@ class devcommand(commands.Cog):
             await inter.response.defer()
 
             bot_latency = self.bot.latency * 1000
-            api_latency = await self.get_discord_api_latency()
+            api_latency = await CommandTools.get_discord_api_latency()
             embed = Embeds.embed_builder(
                 'Pong!.',
                 author=inter.author,
