@@ -1,7 +1,6 @@
 import disnake
 from disnake.ext import commands
 from Utils.Embeds import Embeds
-import requests
 import aiohttp
 import dotenv
 dotenv.load_dotenv()
@@ -30,7 +29,7 @@ class Weather(commands.Cog):
         }
 
         async with aiohttp.ClientSession as session:
-            async with session.get(url=base_url,params=params) as response:
+            async with session.get(url=base_url, params=params) as response:
                 response = response.json
 
         weather_description = response["weather"][0]["description"]
@@ -38,7 +37,11 @@ class Weather(commands.Cog):
         humidity = response["main"]["humidity"]
         wind_speed = response["wind"]["speed"]
         unit_symbol = "°C" if unit == "metric" else "°F"
-        embed = Embeds.embed_builder(title=f'Weather in {location}',author=inter.author)
+        embed = Embeds.embed_builder(
+            title=f'Weather in {location}',
+            author=inter.author,
+            footer='made by charis_k'
+        )
         embed.add_field(name="Description", value=weather_description, inline=True)
         embed.add_field(name="Temperature", value=f"{temperature} {unit_symbol}", inline=True)
         embed.add_field(name="Humidity", value=f"{humidity}%", inline=True)

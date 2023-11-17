@@ -63,3 +63,7 @@ class Help(commands.Cog):
                 footer=self.footer
             )
             await inter.response.send_message(embed=embed)
+
+
+def setup(bot):
+    bot.add_cog(Help(bot))

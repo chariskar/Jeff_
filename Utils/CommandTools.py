@@ -1,3 +1,5 @@
+import aiohttp
+import time
 
 class CommandTools:
     def list_to_string(*args):
@@ -74,3 +76,13 @@ class CommandTools:
             return 10
         else:
             return 0
+
+
+    @staticmethod
+    async def get_discord_api_latency():
+        async with aiohttp.ClientSession() as session:
+            start_time = time.time()
+            async with session.get('https://discord.com/api/v10/gateway'):
+                end_time = time.time()
+                latency = (end_time - start_time) * 1000
+                return latency

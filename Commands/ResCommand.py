@@ -18,7 +18,8 @@ class ResCommand(commands.Cog):
         inter: disnake.ApplicationCommandInteraction,
 
     ):
-        await inter.send('This is the main /resident command there are commands lke /res search , /res friendlist etc')
+        pass
+
 
     @res.sub_command(description="Provides general info about a resident")
     async def search(

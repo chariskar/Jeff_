@@ -15,39 +15,24 @@ class Lookup:
     @classmethod
     async def lookup(cls, server: str = 'aurora', endpoint=None, name=None):
         try:
-            if not endpoint == 'alliance':
-                if endpoint is None:
-                    api_url = f"https://api.earthmc.net/v2/{server}/"
-                elif name is None:
-                    api_url = f"https://api.earthmc.net/v2/{server}/{endpoint}"
 
-                else:
-                    api_url = f"https://api.earthmc.net/v2/{server}/{endpoint}/{name}"
-
-                try:
-                    if (server, endpoint, name) in cls.cache:
-                        return cls.cache[(server, endpoint, name)]
-                    async with aiohttp.ClientSession() as session:
-                        async with session.get(api_url) as response:
-                            lookup = await response.json()
-                except Exception as e:
-                    raise e
-
-                cls.cache[(server, endpoint, name)] = lookup
-                return lookup
+            if endpoint is None:
+                api_url = f"https://api.earthmc.net/v2/{server}/"
+            elif name is None:
+                api_url = f"https://api.earthmc.net/v2/{server}/{endpoint}"
             else:
-                if not name:
-                    api_url = f'https://emctoolkit.vercel.app/api/aurora/alliances/'
-                else:
-                    api_url = f'https://emctoolkit.vercel.app/api/aurora/alliances/{name}'
-                try:
-                    if (server, endpoint, name) in cls.cache:
-                        return cls.cache[(server, endpoint, name)]
-                    async with aiohttp.ClientSession() as session:
-                        async with session.get(api_url) as lookup:
-                            lookup = await lookup.json()
-                except Exception as e:
-                    raise e
+                api_url = f"https://api.earthmc.net/v2/{server}/{endpoint}/{name}"
+            try:
+                if (server, endpoint, name) in cls.cache:
+                    return cls.cache[(server, endpoint, name)]
+                async with aiohttp.ClientSession() as session:
+                    async with session.get(api_url) as response:
+                        lookup = await response.json()
+            except Exception as e:
+                raise e
+            cls.cache[(server, endpoint, name)] = lookup
+            return lookup
+
         except Exception as e:
             raise e
 
@@ -63,6 +48,6 @@ class Lookup:
         try:
             size = cls.cache.currsize
             max_size = cls.cache.maxsize
-            return size , max_size
+            return size, max_size
         except Exception as e:
             raise e
