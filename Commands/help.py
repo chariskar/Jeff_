@@ -26,6 +26,7 @@ class Help(commands.Cog):
     @commands.slash_command(description='Help command')
     async def help(self, inter: disnake.ApplicationCommandInteraction):
         try:
+            await inter.response.defer()
             embed = Embeds.embed_builder(
                 title='Commands',
                 footer=self.footer,
@@ -53,27 +54,15 @@ class Help(commands.Cog):
                 name='Server',
                 value='only one command for now',
                 inline=True
-
             )
-            embed.add_field(
-                name='Devcommands /ping',
-                value='see the bots ping the only available to everyone dev command',
-                inline=True
-
-            )
-            embed.add_field(
-                name='Weather',
-                value='only one command for now',
-                inline=True
-
-            )
-            await inter.response.send_message(embed=embed)
+            await inter.edit_original_response(embed=embed)
         except Exception as e:
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer
             )
-            await inter.response.send_message(embed=embed)
+            await inter.send(embed=embed)
+
 
     @commands.slash_command(description='Help for a specific command and subcommand')
     async def help_specific(
@@ -111,7 +100,6 @@ class Help(commands.Cog):
                     ['weather',
                      'server']
             }
-
             if command in command_dict and subcommand in command_dict[command]:
                 embed = Embeds.embed_builder(
                     title=f'Help for {inter.author.global_name}',
@@ -129,93 +117,93 @@ class Help(commands.Cog):
                     inline=True
                 )
                 if command == 'nation':
-                    if subcommand == command_dict[command]['search']:
+                    if subcommand == command_dict[command][0]:
                         embed.add_field(
                             name='The nation search command',
                             value='Used to search general info for a nation as with all nation commands default is Jefferson',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['allylist']:
+                    elif subcommand == command_dict[command][1]:
                         embed.add_field(
                             name='The nation allylist command',
                             value='Used to get the allies of a nation as with all nation commands default is Jefferson',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['reslist']:
+                    elif subcommand == command_dict[command][2]:
                         embed.add_field(
                             name='The nation reslist command',
                             value='Used to get the residents of a nation as with all nation commands default is Jefferson',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['ranklist']:
+                    elif subcommand == command_dict[command][3]:
                         embed.add_field(
                             name='The nation ranklist command',
                             value='Used to get the ranked residents of a nation as with all nation commands default is Jefferson',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['townlist']:
+                    elif subcommand == command_dict[command][4]:
                         embed.add_field(
                             name='The nation townlist command',
                             value='Used to get the towns of a nation as with all nation commands default is Jefferson',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['unallied']:
+                    elif subcommand == command_dict[command][5]:
                         embed.add_field(
                             name='The nation unallied command',
                             value='Used to get the unallied nations a nation has as with all nation commands default is Jefferson',
                             inline=True
                         )
                 elif command == 'town':
-                    if subcommand == command_dict[command]['search']:
+                    if subcommand == command_dict[command][0]:
                         embed.add_field(
                             name='The town search command',
                             value='Used to get info about a town as with all town commands it is a pick of 3 towns',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['outlawlist']:
+                    elif subcommand == command_dict[command][1]:
                         embed.add_field(
                             name='The town outlawlist command',
                             value='Used to get the outlawed users of a town as with all town commands it is a pick of 3 towns',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['reslist']:
+                    elif subcommand == command_dict[command][2]:
                         embed.add_field(
                             name='The reslist command',
                             value='As with the nation reslist command it gets the residents of a town as with all town commands it is a pick of 3 towns',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['ranklist']:
+                    elif subcommand == command_dict[command][3]:
                         embed.add_field(
                             name='The ranklist command',
                             value='As with the nation ranklist command it gets the ranked residents of a town as with all town commands it is a pick of 3 towns',
                             inline=True
                         )
                 elif command == 'devcommands':
-                    if subcommand == command_dict[command]['restart']:
+                    if subcommand == command_dict[command][0]:
                         embed.add_field(
                             name='The restart command',
                             value='Restart the bot available to devs only',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['stop']:
+                    elif subcommand == command_dict[command][1]:
                         embed.add_field(
                             name='The stop command',
                             value='Stop the bot available to devs only',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['log_to_console']:
+                    elif subcommand == command_dict[command][2]:
                         embed.add_field(
                             name='The log_to_console command',
                             value='Log to the bots console available to devs only',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['clear_cache']:
+                    elif subcommand == command_dict[command][3]:
                         embed.add_field(
                             name='The clear_cache command',
                             value='Clear the bots cache available to devs only',
                             inline=True
                         )
-                    elif subcommand == command_dict[command]['ping']:
+                    elif subcommand == command_dict[command][4]:
                         embed.add_field(
                             name='The ping command',
                             value='Get the bots cache available to everyone',
@@ -234,15 +222,16 @@ class Help(commands.Cog):
                             value='An emc related command just didnt know where to put it so it ended up here',
                             inline=True
                         )
+                await inter.edit_original_response(embed=embed)
             else:
                 await inter.send("Invalid command or subcommand")
-
         except Exception as e:
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer
             )
             await inter.send(embed=embed)
+
 
 
 def setup(bot):
