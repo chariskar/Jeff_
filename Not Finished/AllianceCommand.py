@@ -1,13 +1,13 @@
 import disnake
 from disnake.ext import commands
 from Utils.Embeds import Embeds
-from Utils.Lookup import Lookup
 from Utils.CommandTools import CommandTools
-
+import aiohttp
 
 class AllianceCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+        self.url = 'https://emctoolkit.vercel.app/api/aurora/'
 
     @commands.slash_command(description="Alliance-related commands.")
     async def alliance(self, inter: disnake.ApplicationCommandInteraction):
@@ -15,12 +15,18 @@ class AllianceCommand(commands.Cog):
 
 
     @alliance.sub_command(description="Retrieve and display general information about an alliance.")
-    async def info(self, inter: disnake.ApplicationCommandInteraction, alliance: str):
+    async def info(
+            self,
+            inter: disnake.ApplicationCommandInteraction,
+            alliance: str = commands.param('name')):
         """Retrieve and display general information about an alliance."""
         commandString = f"/alliance info {alliance}"
 
         try:
-            allianceInfo = await Lookup.lookup(endpoint='alliance',name=alliance,server='aurora')
+            url = str(self.url + alliance)
+            async with aiohttp.ClientSession as session:
+                async with session.get(url=url) as response:
+                    allianceInfo = await response.json()
 
 
             embed = Embeds.embed_builder(
