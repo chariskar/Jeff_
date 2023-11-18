@@ -7,13 +7,40 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.footer = 'made by charis_k'
-
+        self.command_dict = {
+            'nation':
+                [
+                    'search',
+                    'allylist',
+                    'reslist',
+                    'ranklist',
+                    'townlist',
+                    'unallied'],
+            'town':
+                ['search',
+                 'outlawlist',
+                 'reslist',
+                 'ranklist'],
+            'devcommands':
+                ['restart',
+                 'stop',
+                 'ping',
+                 'log_to_console',
+                 'clear_cache'],
+            'res':
+                ['search',
+                 'friendlist'],
+            'general':
+                ['weather',
+                 'server']
+        }
 
     @commands.slash_command(description='stars are appreciated <3')
     async def github(self, inter: disnake.ApplicationCommandInteraction):
         try:
             await inter.response.defer()
-            await inter.edit_original_response('https://github.com/chariskar/Jeff_/tree/python stars are appreciated <3')
+            await inter.edit_original_response(
+                'https://github.com/chariskar/Jeff_/tree/python stars are appreciated <3')
 
         except Exception as e:
             embed = Embeds.error_embed(
@@ -21,7 +48,6 @@ class Help(commands.Cog):
                 footer=self.footer
             )
             await inter.response.send_message(embed=embed)
-
 
     @commands.slash_command(description='Help command')
     async def help(self, inter: disnake.ApplicationCommandInteraction):
@@ -68,7 +94,6 @@ class Help(commands.Cog):
             )
             await inter.send(embed=embed)
 
-
     @commands.slash_command(description='Help for a specific command and subcommand')
     async def help_specific(
             self,
@@ -78,48 +103,12 @@ class Help(commands.Cog):
     ):
         try:
             await inter.response.defer()
-            command_dict = {
-                'nation':
-                    [
-                        'search',
-                        'allylist',
-                        'reslist',
-                        'ranklist',
-                        'townlist',
-                        'unallied'],
-                'town':
-                    ['search',
-                     'outlawlist',
-                     'reslist',
-                     'ranklist'],
-                'devcommands':
-                    ['restart',
-                     'stop',
-                     'ping',
-                     'log_to_console',
-                     'clear_cache'],
-                'res':
-                    ['search',
-                     'friendlist'],
-                'general':
-                    ['weather',
-                     'server']
-            }
+            command_dict: dict = self.command_dict
             if command in command_dict and subcommand in command_dict[command]:
                 embed = Embeds.embed_builder(
                     title=f'Help for {inter.author.global_name}',
                     author=inter.author,
                     footer=self.footer
-                )
-                embed.add_field(
-                    name=command,
-                    value='',
-                    inline=True
-                )
-                embed.add_field(
-                    name=subcommand,
-                    value='',
-                    inline=True
                 )
                 if command == 'nation':
                     if subcommand == command_dict[command][0]:
@@ -228,6 +217,49 @@ class Help(commands.Cog):
                             inline=True
                         )
                 await inter.edit_original_response(embed=embed)
+            elif command and subcommand == 'None' or not subcommand:
+                embed = Embeds.embed_builder(
+                    title=f'Help for {inter.author.global_name}',
+                    author=inter.author,
+                    footer=self.footer
+                )
+                if command == 'nation':
+                    embed.add_field(
+                        name=f'The {command} command',
+                        value=f'It is the base command for all {command} commands it doesnt do anything.',
+                        inline=True
+                    )
+                elif command == 'town':
+                    embed.add_field(
+                        name=f'The {command} command',
+                        value=f'It is the base command for all {command} commands it doesnt do anything.',
+                        inline=True
+                    )
+                elif command == 'res':
+                    embed.add_field(
+                        name=f'The {command} command',
+                        value=f'It is the base command for all {command} commands it doesnt do anything.',
+                        inline=True
+                    )
+                elif command == 'server':
+                    embed.add_field(
+                        name=f'The {command} command',
+                        value=f'It is the only {command} command and it displays server info.',
+                        inline=True
+                    )
+                elif command == 'weather':
+                    embed.add_field(
+                        name=f'The {command} command',
+                        value=f'It is the only {command} command and it displays server info.',
+                        inline=True
+                    )
+                elif command == 'devcommands':
+                    embed.add_field(
+                        name=f'The {command} command',
+                        value=f'The dev commands only one is available to anyone',
+                        inline=True
+                    )
+                await inter.edit_original_response(embed=embed)
             else:
                 await inter.send("Invalid command or subcommand")
         except Exception as e:
@@ -236,7 +268,6 @@ class Help(commands.Cog):
                 footer=self.footer
             )
             await inter.send(embed=embed)
-
 
 
 def setup(bot):

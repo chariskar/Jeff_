@@ -202,5 +202,7 @@ class devcommand(commands.Cog):
                 footer=self.footer
             )
             await inter.edit_original_response(embed=embed)
+
+
 def setup(bot):
     bot.add_cog(devcommand(bot))
