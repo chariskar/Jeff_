@@ -13,7 +13,7 @@ class Help(commands.Cog):
     async def github(self, inter: disnake.ApplicationCommandInteraction):
         try:
             await inter.response.defer()
-            await inter.edit_original_response('https://github.com/chariskar/Jeff_/tree/python')
+            await inter.edit_original_response('https://github.com/chariskar/Jeff_/tree/python stars are appreciated <3')
 
         except Exception as e:
             embed = Embeds.error_embed(
@@ -52,6 +52,11 @@ class Help(commands.Cog):
             )
             embed.add_field(
                 name='Server',
+                value='only one command for now',
+                inline=True
+            )
+            embed.add_field(
+                name='Weather',
                 value='only one command for now',
                 inline=True
             )
@@ -191,22 +196,22 @@ class Help(commands.Cog):
                             value='Stop the bot available to devs only',
                             inline=True
                         )
-                    elif subcommand == command_dict[command][2]:
+                    elif subcommand == command_dict[command][3]:
                         embed.add_field(
                             name='The log_to_console command',
                             value='Log to the bots console available to devs only',
                             inline=True
                         )
-                    elif subcommand == command_dict[command][3]:
+                    elif subcommand == command_dict[command][4]:
                         embed.add_field(
                             name='The clear_cache command',
                             value='Clear the bots cache available to devs only',
                             inline=True
                         )
-                    elif subcommand == command_dict[command][4]:
+                    elif subcommand == command_dict[command][2]:
                         embed.add_field(
                             name='The ping command',
-                            value='Get the bots cache available to everyone',
+                            value='Get the bots ping available to everyone',
                             inline=True
                         )
                 elif command == 'weather' or command == 'server':
