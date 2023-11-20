@@ -7,7 +7,7 @@ class Help(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.footer = 'made by charis_k'
-        self.command_dict = {
+        self.command_dict: dict = {
             'nation':
                 [
                     'search',
@@ -99,7 +99,7 @@ class Help(commands.Cog):
             self,
             inter: disnake.ApplicationCommandInteraction,
             command: str = commands.param(name='command'),
-            subcommand: str = commands.param(name='subcommand')
+            subcommand: str = commands.param(name='subcommand',default='')
     ):
         try:
             await inter.response.defer()
