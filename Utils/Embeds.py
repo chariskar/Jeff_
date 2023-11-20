@@ -6,9 +6,12 @@ import traceback
 class Embeds:
 
     @staticmethod
-    def embed_builder(title, description=None, author=None, footer='Maintained by charis_k', thumbnail=None,
-                      maintain_bot=False,
-                      your_name=None):
+    def embed_builder(
+            title, description=None
+            , author: disnake.ApplicationCommandInteraction.author = None,
+            footer: str = 'made by charis_k',
+            thumbnail=None,
+                     ):
         embed = disnake.Embed(
             title=title,
             description=description,
@@ -16,24 +19,13 @@ class Embeds:
             timestamp=datetime.datetime.now()
         )
         try:
-            if author is not None:
-                if maintain_bot:
-                    bot_name = ""
-                    embed.set_author(
-                        name=f"Queried by {author.display_name} - Maintained by {bot_name}",
-                        icon_url=author.avatar.url if author.avatar else None
-                    )
-                else:
-                    if your_name:
-                        embed.set_author(
-                            name=f"Queried by {author.display_name} - Maintained by {your_name}",
-                            icon_url=author.avatar.url if author.avatar else None
-                        )
-                    else:
-                        embed.set_author(
-                            name=f"Queried by {author.display_name} ",
-                            icon_url=author.avatar.url if author.avatar else None
-                        )
+            if author:
+                embed.set_author(
+                    name=f"Queried by {author.display_name} ",
+                    icon_url=author.avatar.url if author.avatar else None
+                )
+            elif not author:
+                return f'You need to provide author'
 
             if footer is not None:
                 embed.set_footer(
@@ -58,14 +50,24 @@ class Embeds:
 
 
     @staticmethod
-    def error_embed(value, type=None, footer=None, ):
+    def error_embed(
+            value, type=None,
+            footer=None,
+            author: disnake.ApplicationCommandInteraction.author = None):
         try:
             if type != "userError":
                 traceback.print_exc()
 
-            embed = Embeds.embed_builder(title="`Error`", footer=footer)
+            embed = Embeds.embed_builder(
+                title="`Error`",
+                footer=footer,
+                author=author
+            )
 
-            embed.add_field(name="Something went wrong", value=value, inline=True)
+            embed.add_field(
+                name="Something went wrong",
+                value=value,
+                inline = True)
 
             return embed
         except Exception as e:
