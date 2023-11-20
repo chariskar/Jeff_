@@ -191,17 +191,7 @@ class devcommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
 
 
-    async def cache_info(self, inter: disnake.ApplicationCommandInteraction):
-        try:
-            cache_info = Lookup.cache_info()
-            cache = str(cache_info).split(',')
-            cache: list = list(cache)
-        except Exception as e:
-            embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
-            )
-            await inter.edit_original_response(embed=embed)
+
 
 
 def setup(bot):

@@ -23,7 +23,7 @@ class AllianceCommand(commands.Cog):
         commandString = f"/alliance info {alliance}"
 
         try:
-            url = str(self.url + alliance)
+            url: str = self.url + alliance
             async with aiohttp.ClientSession as session:
                 async with session.get(url=url) as response:
                     allianceInfo = await response.json()
@@ -31,7 +31,6 @@ class AllianceCommand(commands.Cog):
 
             embed = Embeds.embed_builder(
                 title=f'Alliance info about {alliance}',
-                footer='made by charis_k',
                 author=inter.author
             )
 
