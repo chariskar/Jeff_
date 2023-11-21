@@ -65,10 +65,11 @@ class TownCommand(commands.Cog):
 
         try:
             try:
-                locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={townsLookup['spawn']['x']}&z={townsLookup['spawn']['z']}"
-                location = f"[{int(round(townsLookup['spawn']['x'], 0))}, {int(round(townsLookup['spawn']['z'], 0))}]({locationUrl})"
+                spawn = townsLookup['spawn']['home']
+                locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={spawn['x']}&z={spawn['z']}"
+                location = f"[{int(round(townsLookup['spawn']['x'], 0))}, {int(round(spawn['spawn']['z'], 0))}]({locationUrl})"
             except:
-                locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={townsLookup['home']['x'] * 16}&z={townsLookup['home']['z'] * 16}"
+                locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={spawn['x'] * 16}&z={spawn['z'] * 16}"
                 location = f"[{townsLookup['home']['x'] * 16}, {townsLookup['home']['z'] * 16}]({locationUrl})"
 
             try:
@@ -81,17 +82,17 @@ class TownCommand(commands.Cog):
             rnaoPermsList = CommandTools.rnao_perms(json=townsLookup)
 
             embed = Embeds.embed_builder(
-                title=f"`{townsLookup['strings']['town']}`",
-                description=townsLookup["strings"]["board"],
+                title=f"`{townsLookup['name']}`",
+                description=townsLookup["board"],
                 footer=self.footer,
                 author=inter.author
             )
 
-            embed.add_field(name="Mayor", value=townsLookup["strings"]["mayor"], inline=True)
+            embed.add_field(name="Mayor", value=townsLookup["mayor"], inline=True)
             embed.add_field(name="Nation", value=nation, inline=True)
             embed.add_field(name="Location", value=location, inline=True)
 
-            embed.add_field(name="Residents", value=townsLookup["stats"]["numResidents"], inline=True)
+            embed.add_field(name="Residents", value=townsLookup["numResidents"], inline=True)
             embed.add_field(
                 name="Town Blocks",
                 value=f"{townsLookup['stats']['numTownBlocks']}/{townsLookup['stats']['maxTownBlocks']} ({townsLookup['stats']['numTownBlocks'] * 16 + 48}G)",
@@ -107,7 +108,7 @@ class TownCommand(commands.Cog):
 
             embed.add_field(name="Balance", value=f"{townsLookup['stats']['balance']}G", inline=True)
 
-            embed.add_field(name="Founder", value=townsLookup["strings"]["founder"], inline=True)
+            embed.add_field(name="Founder", value=townsLookup["founder"], inline=True)
             embed.add_field(
                 name="Founded",
                 value=f"<t:{round(townsLookup['timestamps']['registered'] / 1000)}:R>",
@@ -164,7 +165,7 @@ class TownCommand(commands.Cog):
 
         try:
             embed = Embeds.embed_builder(
-                title=f"`{townsLookup['strings']['town']}'s Residents",
+                title=f"`{townsLookup['name']}'s Residents",
                 footer=self.footer,
                 author=inter.author
             )
@@ -205,7 +206,7 @@ class TownCommand(commands.Cog):
 
         try:
             embed = Embeds.embed_builder(
-                title=f"`{townsLookup['strings']['town']}'s Ranked Residents",
+                title=f"`{townsLookup['name']}'s Ranked Residents",
                 footer=commandString,
                 author=inter.author
             )
@@ -284,7 +285,7 @@ class TownCommand(commands.Cog):
 
         try:
             embed = Embeds.embed_builder(
-                title=f"`{townsLookup['strings']['town']}'s Outlaws",
+                title=f"`{townsLookup['name']}'s Outlaws",
                 footer=self.footer,
                 author=inter.author
             )
@@ -295,7 +296,7 @@ class TownCommand(commands.Cog):
                 embed.add_field(name="Outlaws", value=f"```{outlawsString[:1018]}```", inline=True)
 
             else:
-                embed.add_field(name="Outlaws", value=f"{townsLookup['strings']['town']} has no outlaws :)", inline=True)
+                embed.add_field(name="Outlaws", value=f"{townsLookup['name']} has no outlaws :)", inline=True)
 
             await inter.response.send_message(embed=embed, ephemeral=False)
 

@@ -40,14 +40,14 @@ class NationCommand(commands.Cog):
 
 
             embed = Embeds.embed_builder(
-                title=f"`{nationsLookup['strings']['nation']}`",
-                description=nationsLookup["strings"]["board"],
+                title=f"`{nationsLookup['nation']}`",
+                description=nationsLookup["board"],
                 footer=self.footer,
                 author=inter.author
             )
 
-            embed.add_field(name="King", value=nationsLookup["strings"]["king"], inline=True)
-            embed.add_field(name="Capital", value=nationsLookup["strings"]["capital"], inline=True)
+            embed.add_field(name="King", value=nationsLookup["king"], inline=True)
+            embed.add_field(name="Capital", value=nationsLookup["capital"], inline=True)
             embed.add_field(
                 name="Location",
                 value=f"[{int(round(nationsLookup['spawn']['x'], 0))}, {int(round(nationsLookup['spawn']['z'], 0))}]({locationUrl})",

@@ -10,11 +10,11 @@ class Lookup:
         try:
 
             if endpoint is None:
-                api_url = f"https://api.earthmc.net/v1/{server}/"
+                api_url = f"https://api.earthmc.net/v2/{server}/"
             elif name is None:
-                api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}"
+                api_url = f"https://api.earthmc.net/v2/{server}/{endpoint}"
             else:
-                api_url = f"https://api.earthmc.net/v1/{server}/{endpoint}/{name}"
+                api_url = f"https://api.earthmc.net/v2/{server}/{endpoint}/{name}"
             try:
                 if (server, endpoint, name) in cls.cache:
                     return cls.cache[(server, endpoint, name)]
