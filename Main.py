@@ -1,18 +1,18 @@
 import disnake
 import dotenv
-from disnake.ext import commands, tasks
+from disnake.ext import  tasks
 import os
 from dotenv import load_dotenv
-from disnake.ext.commands import InteractionBot
 import random
+from Utils.Bot_News import bot
 
-bot: InteractionBot = commands.InteractionBot()
 load_dotenv()
 activities = [
     disnake.Game(name="play.earthmc.net"),
     disnake.Activity(type=disnake.ActivityType.listening, name="to your commands"),
     disnake.Activity(type=disnake.ActivityType.watching, name="ALL OF YOU"),
     disnake.Game(name='I have a brother Jefferson ModMail')
+
 ]
 
 

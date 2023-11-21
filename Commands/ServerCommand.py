@@ -69,11 +69,11 @@ class ServerCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-
-            await inter.send(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
 
 def setup(bot):

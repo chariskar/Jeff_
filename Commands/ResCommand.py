@@ -28,6 +28,7 @@ class ResCommand(commands.Cog):
         username: str = commands.Param(description="Resident's username, type 'random' for a random choice"),
     ):
         server: str = "aurora"
+        await inter.response.defer()
 
         try:
             if username.lower() == "random":
@@ -37,11 +38,11 @@ class ResCommand(commands.Cog):
             residentsLookup = await Lookup.lookup(server, endpoint="residents", name=username,version=1)
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-
+                value=e,
                 footer=self.footer,
+                author=inter.author
             )
-            await inter.send(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
             return
 
         try:
@@ -81,14 +82,15 @@ class ResCommand(commands.Cog):
                     name = "Town Ranks" if rankType == "townRanks" else "Nation Ranks"
                     embed.add_field(name=name, value=rankString.title(), inline=False)
 
-            await inter.send(embed=embed, ephemeral=False)
+            await inter.send(embed=embed)
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-            await inter.send(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
 
     @res.sub_command(description="View all the friends of a specified resident")
@@ -98,7 +100,10 @@ class ResCommand(commands.Cog):
         username: str = commands.Param(description="Resident's username"),
     ):
         server: str = "aurora"
+        await inter.response.defer()
+
         try:
+
             residentsLookup = await Lookup.lookup(server.lower(), endpoint="residents", name=username,version=1)
         except Exception as e:
             embed = Embeds.error_embed(
@@ -126,10 +131,11 @@ class ResCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-            await inter.send(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
 
 def setup(bot):

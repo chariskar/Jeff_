@@ -90,9 +90,10 @@ class Help(commands.Cog):
         except Exception as e:
             embed = Embeds.error_embed(
                 value=e,
-                footer=self.footer
+                footer=self.footer,
+                author=inter.author
             )
-            await inter.send(embed=embed)
+            await inter.edit_original_response(embed=embed)
 
     @commands.slash_command(description='Help for a specific command and subcommand')
     async def help_specific(
@@ -265,10 +266,10 @@ class Help(commands.Cog):
         except Exception as e:
             embed = Embeds.error_embed(
                 value=e,
-                footer=self.footer
+                footer=self.footer,
+                author=inter.author
             )
-            await inter.send(embed=embed)
-
+            await inter.edit_original_response(embed=embed)
 
 def setup(bot):
     bot.add_cog(Help(bot))

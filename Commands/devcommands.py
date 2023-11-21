@@ -2,9 +2,9 @@ import datetime
 import disnake
 from disnake.ext import commands
 import subprocess
-import aiohttp
 from Utils.Lookup import Lookup
 from Utils.Embeds import Embeds
+from Utils.Bot_News import NewsCog
 from Utils.CommandTools import CommandTools
 import sys
 import pytz
@@ -17,6 +17,8 @@ class devcommand(commands.Cog):
         self.timezone = pytz.timezone('Europe/Athens')
         self.time = datetime.datetime.now(self.timezone)
         self.owner_id = 927581845787402240
+        self.channel_id = 1158381660107198614
+        self.guild_id = 1131117400985706538
 
     @commands.slash_command(description='Restart the bot')
     async def restart(self,
@@ -47,8 +49,9 @@ class devcommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
             await inter.edit_original_response(embed=embed)
 
@@ -87,8 +90,9 @@ class devcommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
             await inter.edit_original_response(embed=embed)
 
@@ -113,8 +117,9 @@ class devcommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
             await inter.edit_original_response(embed=embed)
 
@@ -146,8 +151,9 @@ class devcommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
             await inter.edit_original_response(embed=embed)
 
@@ -185,14 +191,31 @@ class devcommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
             await inter.edit_original_response(embed=embed)
 
+    @commands.slash_command(description='see the latest news')
+    async def send_last_message(self, inter: disnake.ApplicationCommandInteraction):
+        try:
+            await inter.response.defer()
+            guild: disnake.Guild = self.bot.get_guild(self.guild_id)
+            channel: disnake.TextChannel = guild.get_channel(self.channel_id)
 
+            last_message = await NewsCog.on_message(channel.last_message)
+            await inter.edit_original_response(
+                f'{last_message}'
+            )
 
-
+        except Exception as e:
+            embed = Embeds.error_embed(
+                value=e,
+                footer=self.footer,
+                author=inter.author
+            )
+            await inter.edit_original_response(embed=embed)
 
 def setup(bot):
     bot.add_cog(devcommand(bot))

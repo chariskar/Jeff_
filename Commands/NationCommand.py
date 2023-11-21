@@ -84,10 +84,10 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-
             await inter.edit_original_response(embed=embed)
 
     @nation.sub_command(description="View all the residents of a specified nation.")
@@ -120,11 +120,10 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
+                value=e,
                 footer=self.footer,
-
+                author=inter.author
             )
-
             await inter.edit_original_response(embed=embed)
 
     @nation.sub_command(description="Retrieve and display the list of ranked residents in a nation.")
@@ -162,10 +161,10 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-
             await inter.edit_original_response(embed=embed)
 
 
@@ -207,10 +206,10 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-
             await inter.edit_original_response(embed=embed)
 
     @nation.sub_command(description="Retrieve and display the list of enemies of a nation.")
@@ -251,10 +250,10 @@ class NationCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-
             await inter.edit_original_response(embed=embed)
 
     @nation.sub_command(description="Retrieve and display the list of towns in a nation.")

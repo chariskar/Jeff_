@@ -27,6 +27,7 @@ class TownCommand(commands.Cog):
     ):
         server: str = "aurora"
         try:
+            await inter.response.defer()
             if not town:
                 num = random.randint(1, 3)
                 try:
@@ -131,14 +132,15 @@ class TownCommand(commands.Cog):
                 inline=True
             )
 
-            await inter.send(embed=embed)
+            await inter.edit_original_response(embed=embed)
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-            await inter.send(embed=embed)
+            await inter.edit_original_response(embed=embed)
 
     @town.sub_command(description="View all the residents of a specified town")
     async def reslist(
@@ -148,7 +150,7 @@ class TownCommand(commands.Cog):
 
     ):
         server: str = "aurora"
-
+        await inter.response.defer()
         commandString = f"/town reslist town: {town} server: {server}"
         try:
             townsLookup = await Lookup.lookup(server, endpoint="towns", name=town)
@@ -177,10 +179,11 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-            await inter.response.send_message(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
     @town.sub_command(description="View all the ranked residents of a specified town")
     async def ranklist(
@@ -189,7 +192,7 @@ class TownCommand(commands.Cog):
         town: str = commands.Param(description="Town's name", default=random.choice(choices)),
     ):
         server: str = "aurora"
-
+        await inter.response.defer()
         commandString = f"/town ranklist town: {town} server: {server}"
         try:
             townsLookup = await Lookup.lookup(server, endpoint="towns", name=town,version=1)
@@ -231,10 +234,11 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-            await inter.response.send_message(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
     @town.sub_command(description="View all the outlaws of a specified town")
     async def outlawlist(
@@ -244,7 +248,7 @@ class TownCommand(commands.Cog):
 
     ):
         server: str = "aurora"
-
+        await inter.response.defer()
         try:
             if not town:
                 num = random.randint(1, 3)
@@ -301,10 +305,11 @@ class TownCommand(commands.Cog):
 
         except Exception as e:
             embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
+                value=e,
+                footer=self.footer,
+                author=inter.author
             )
-            await inter.response.send_message(embed=embed, ephemeral=True)
+            await inter.edit_original_response(embed=embed)
 
 
 def setup(bot):
