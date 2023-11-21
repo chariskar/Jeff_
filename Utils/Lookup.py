@@ -6,15 +6,15 @@ class Lookup:
     cache: TTLCache = TTLCache(maxsize=289, ttl=150)
 
     @classmethod
-    async def lookup(cls, server: str = 'aurora', endpoint=None, name=None):
+    async def lookup(cls, server: str = 'aurora', endpoint=None, name=None,version:int=2):
         try:
 
             if endpoint is None:
-                api_url = f"https://api.earthmc.net/v2/{server}/"
+                api_url = f"https://api.earthmc.net/v{version}/{server}/"
             elif name is None:
-                api_url = f"https://api.earthmc.net/v2/{server}/{endpoint}"
+                api_url = f"https://api.earthmc.net/v{version}/{server}/{endpoint}"
             else:
-                api_url = f"https://api.earthmc.net/v2/{server}/{endpoint}/{name}"
+                api_url = f"https://api.earthmc.net/v{version}/{server}/{endpoint}/{name}"
             try:
                 if (server, endpoint, name) in cls.cache:
                     return cls.cache[(server, endpoint, name)]

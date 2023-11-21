@@ -23,9 +23,9 @@ class ServerCommand(commands.Cog):
     ):
         try:
             serverLookup = await Lookup.lookup(server)
-            allResidentsLookup = await Lookup.lookup(server, endpoint="residents")
-            allTownsLookup = await Lookup.lookup(server, endpoint="towns")
-            allNationsLookup = await Lookup.lookup(server, endpoint="nations")
+            allResidentsLookup = await Lookup.lookup(server, endpoint="residents",version=1)
+            allTownsLookup = await Lookup.lookup(server, endpoint="towns",version=1)
+            allNationsLookup = await Lookup.lookup(server, endpoint="nations",version=1)
 
         except Exception as e:
             embed = Embeds.error_embed(

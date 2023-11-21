@@ -34,7 +34,7 @@ class ResCommand(commands.Cog):
                 allResidentsLookup = Lookup.lookup(server, endpoint="residents")
                 username = random.choice(allResidentsLookup["allResidents"])
 
-            residentsLookup = await Lookup.lookup(server, endpoint="residents", name=username)
+            residentsLookup = await Lookup.lookup(server, endpoint="residents", name=username,version=1)
         except Exception as e:
             embed = Embeds.error_embed(
                 value=f'Error is {e}',
@@ -45,7 +45,7 @@ class ResCommand(commands.Cog):
             return
 
         try:
-            fullNameList = [residentsLookup["title"], residentsLookup["username"], residentsLookup["surname"]]
+            fullNameList = [residentsLookup["strings"]["title"], residentsLookup["strings"]["username"], residentsLookup["strings"]["surname"]]
             fullNameList = [x for x in fullNameList if x != ""]
             fullName = " ".join(fullNameList)
 
@@ -63,7 +63,7 @@ class ResCommand(commands.Cog):
                 title=f"`{fullName}`",
                 author=inter.author,
                 footer=self.footer,
-                thumbnail=f"https://mc-heads.net/head/{residentsLookup['username']}",
+                thumbnail=f"https://mc-heads.net/head/{residentsLookup['strings']['username']}",
             )
 
             embed.add_field(name="Affiliation", value=f"• `Town` — {town}\n• `Nation` — {nation}", inline=True)
@@ -99,7 +99,7 @@ class ResCommand(commands.Cog):
     ):
         server: str = "aurora"
         try:
-            residentsLookup = await Lookup.lookup(server.lower(), endpoint="residents", name=username)
+            residentsLookup = await Lookup.lookup(server.lower(), endpoint="residents", name=username,version=1)
         except Exception as e:
             embed = Embeds.error_embed(
                 value=f'Error is {e}',
@@ -111,7 +111,7 @@ class ResCommand(commands.Cog):
 
         try:
             embed = Embeds.embed_builder(
-                title=f"`{residentsLookup['username']}'s Friends",
+                title=f"`{residentsLookup['strings']['username']}'s Friends",
                 footer=self.footer,
                 author=inter.author,
             )
@@ -120,7 +120,7 @@ class ResCommand(commands.Cog):
                 friendsString = CommandTools.list_to_string(residentsLookup["friends"])
                 embed.add_field(name="Friends", value=f"```{friendsString[:1018]}```", inline=True)
             else:
-                embed.add_field(name="Friends", value=f"{residentsLookup['username']} has no friends :(", inline=True)
+                embed.add_field(name="Friends", value=f"{residentsLookup['strings']['username']} has no friends :(", inline=True)
 
             await inter.send(embed=embed, ephemeral=False)
 

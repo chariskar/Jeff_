@@ -40,7 +40,7 @@ class NationCommand(commands.Cog):
 
 
             embed = Embeds.embed_builder(
-                title=f"`{nationsLookup['nation']}`",
+                title=f"`{nationsLookup['name']}`",
                 description=nationsLookup["board"],
                 footer=self.footer,
                 author=inter.author
