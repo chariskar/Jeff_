@@ -15,14 +15,12 @@ class Lookup:
                 api_url = f"https://api.earthmc.net/v{version}/{server}/{endpoint}"
             else:
                 api_url = f"https://api.earthmc.net/v{version}/{server}/{endpoint}/{name}"
-            try:
-                if (server, endpoint, name) in cls.cache:
-                    return cls.cache[(server, endpoint, name)]
-                async with aiohttp.ClientSession() as session:
-                    async with session.get(api_url) as response:
-                        lookup = await response.json()
-            except Exception as e:
-                raise e
+            if (server, endpoint, name) in cls.cache:
+                return cls.cache[(server, endpoint, name)]
+            async with aiohttp.ClientSession() as session:
+                async with session.get(api_url) as response:
+                    lookup = await response.json()
+           
             cls.cache[(server, endpoint, name)] = lookup
             return lookup
 
