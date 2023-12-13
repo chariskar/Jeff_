@@ -47,7 +47,7 @@ class TownCommand(commands.Cog):
                     return
             else:
                 try:
-                    townsLookup = await Lookup.lookup(server, endpoint="towns", name=town)
+                    townsLookup = await Lookup.lookup(server, endpoint="towns", name=town,version=1)
                 except Exception as e:
                     embed = Embeds.error_embed(
                         value=f'Error is {e}',
@@ -98,13 +98,28 @@ class TownCommand(commands.Cog):
                 value=f"{townsLookup['stats']['numTownBlocks']}/{townsLookup['stats']['maxTownBlocks']} ({townsLookup['stats']['numTownBlocks'] * 16 + 48}G)",
                 inline=True
             )
+            for rank in townsLookup["ranks"]:
+                if len(townsLookup["ranks"][rank]) != 0:
+                    rankString = CommandTools.list_to_string(townsLookup["ranks"][rank])
 
+                    embed.add_field(name=rank.capitalize(), value=f"`{rankString[:1022]}`", inline=True)
+
+                else:
+                    embed.add_field(name=rank.capitalize(), value="N/A", inline=True)
+
+            if len(townsLookup["trusted"]) != 0:
+                trustedString = CommandTools.list_to_string(townsLookup["trusted"])
+
+                embed.add_field(name="Trusted", value=f"`{trustedString[:1022]}`", inline=True)
+
+            else:
+                embed.add_field(name="Trusted", value="N/A", inline=True)
             # fetch the nation the town is in
-            Nation = await Lookup.lookup(endpoint='nation', name=nation)
+            '''Nation = await Lookup.lookup(endpoint='nation', name=nation,version=1)
             embed.add_field(
                 name=f'Nation bonus for {nation}',
-                value=CommandTools.claim_bonus(int(Nation['stats']['numResidents']))
-            )
+                value=CommandTools.claim_bonus(Nation['stats']['numResidents'])
+            )'''
 
             embed.add_field(name="Balance", value=f"{townsLookup['stats']['balance']}G", inline=True)
 

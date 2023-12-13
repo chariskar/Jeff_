@@ -198,13 +198,15 @@ class devcommand(commands.Cog):
             await inter.edit_original_response(embed=embed)
 
     @commands.slash_command(description='see the latest news')
-    async def send_last_message(self, inter: disnake.ApplicationCommandInteraction):
+    async def last_message(self, inter: disnake.ApplicationCommandInteraction):
         try:
             await inter.response.defer()
-            guild: disnake.Guild = self.bot.get_guild(self.guild_id)
-            channel: disnake.TextChannel = guild.get_channel(self.channel_id)
 
-            last_message = await NewsCog.on_message(channel.last_message)
+            last_message = await NewsCog.on_message(
+                channel_id=self.channel_id,
+                owner_id=self.owner_id,
+                guild_id=self.guild_id
+            )
             await inter.edit_original_response(
                 f'{last_message}'
             )
