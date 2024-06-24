@@ -4,7 +4,6 @@ from disnake.ext import commands
 import subprocess
 from Utils.Lookup import Lookup
 from Utils.Embeds import Embeds
-from Utils.Bot_News import NewsCog
 from Utils.CommandTools import CommandTools
 import sys
 import pytz
@@ -30,7 +29,7 @@ class devcommand(commands.Cog):
             await inter.response.defer()
             member = inter.author
             if member.id == self.owner_id:
-                embed = Embeds.embed_builder('Restarting', author=inter.author, footer=self.footer)
+                embed = Embeds.embed_builder(title='Restarting', author=inter, footer=self.footer)
                 embed.add_field(name='reason', value=reason, inline=True)
                 embed.add_field(name='Program was run at', value=self.time, inline=True)
 
@@ -40,8 +39,8 @@ class devcommand(commands.Cog):
                 subprocess.run([python] + sys.argv)
             else:
                 embed = Embeds.embed_builder(
-                    f'{inter.author} you cant restart the bot you are not a dev',
-                    author=inter.author,
+                    title=f'{inter.author} you cant restart the bot you are not a dev',
+                    author=inter,
                     footer=self.footer
                 )
                 embed.add_field(name='Program was run at', value=self.time, inline=True)
@@ -51,7 +50,7 @@ class devcommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -69,8 +68,8 @@ class devcommand(commands.Cog):
 
             if member.id == self.owner_id:
                 embed = Embeds.embed_builder(
-                    'Stopping',
-                    author=inter.author,
+                    title='Stopping',
+                    author=inter,
                     footer=self.footer
                 )
                 embed.add_field(name='reason', value=reason, inline=True)
@@ -81,8 +80,8 @@ class devcommand(commands.Cog):
                 exit(code=1)
             else:
                 embed = Embeds.embed_builder(
-                    f'{inter.author} you cant stop the bot you are not a dev',
-                    author=inter.author,
+                    title=f'{inter.author} you cant stop the bot you are not a dev',
+                    author=inter,
                     footer=self.footer
                 )
                 embed.add_field(name='Program was run at', value=self.time, inline=True)
@@ -92,7 +91,7 @@ class devcommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -106,8 +105,8 @@ class devcommand(commands.Cog):
             bot_latency = self.bot.latency * 1000
             api_latency = await CommandTools.get_discord_api_latency()
             embed = Embeds.embed_builder(
-                'Pong!.',
-                author=inter.author,
+                title='Pong!.',
+                author=inter,
                 footer=self.footer
             )
             embed.add_field(name='Bot latency is', value=f'{bot_latency:.2f} ms', inline=True)
@@ -119,7 +118,7 @@ class devcommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -137,7 +136,7 @@ class devcommand(commands.Cog):
                 embed = Embeds.embed_builder(
                     title='Clearing cache',
                     footer=self.footer,
-                    author=inter.author)
+                    author=inter)
                 Lookup.clear_cache()
 
                 print(f'Cache cleared {reason}')
@@ -153,12 +152,12 @@ class devcommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
     @commands.slash_command(description='log something to the console')
-    async def long_to_console(
+    async def log(
             self,
             inter: disnake.ApplicationCommandInteraction,
             reason: str = commands.param(name='reason', default=None)
@@ -170,8 +169,8 @@ class devcommand(commands.Cog):
             if member.id == self.owner_id:
                 print(f'Logged f{reason}')
                 embed = Embeds.embed_builder(
-                    f'{inter.author} Logged',
-                    author=inter.author,
+                    title=f'{inter.author} Logged',
+                    author=inter,
                     footer=self.footer
                 )
                 embed.add_field(name='reason', value=reason, inline=True)
@@ -181,8 +180,8 @@ class devcommand(commands.Cog):
 
             else:
                 embed = Embeds.embed_builder(
-                    f'{inter.author} you cant log to the bots console',
-                    author=inter.author,
+                    title=f'{inter.author} you cant log to the bots console',
+                    author=inter,
                     footer=self.footer
                 )
                 embed.add_field(name='Program was run at', value=self.time, inline=True)
@@ -193,29 +192,45 @@ class devcommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
-
-    @commands.slash_command(description='see the latest news')
-    async def last_message(self, inter: disnake.ApplicationCommandInteraction):
+            
+    async def Command(
+        self,
+        inter: disnake.ApplicationCommandInteraction,
+        command: str = commands.param(name='Command')
+    ):
         try:
             await inter.response.defer()
-
-            last_message = await NewsCog.on_message(
-                channel_id=self.channel_id,
-                owner_id=self.owner_id,
-                guild_id=self.guild_id
-            )
-            await inter.edit_original_response(
-                f'{last_message}'
-            )
-
+            member = inter.author
+            if member.id == self.owner_id:
+                output = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                if output.stderr:
+                    embed = Embeds.embed_builder(
+                        author=inter,
+                        title=f'Error running command {command}' 
+                    )
+                    embed.add_field(
+                        name = 'Error',
+                        value=output.stderr,
+                        inline=True
+                    )
+                else:
+                    embed = Embeds.embed_builder(
+                        inter,
+                        title=f'{command} was run successfuly'
+                    )
+                    embed.add_field(
+                        name='output', 
+                        value=output.stdout,
+                        inline=True
+                    )
         except Exception as e:
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 

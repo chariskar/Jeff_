@@ -7,11 +7,11 @@ class Embeds:
 
     @staticmethod
     def embed_builder(
-            title, description=None
-            , author: disnake.ApplicationCommandInteraction.author = None,
+            author: disnake.ApplicationCommandInteraction,
+            title, description=None,
             footer: str = 'made by charis_k',
             thumbnail=None,
-                     ):
+                     )-> disnake.Embed:
         embed = disnake.Embed(
             title=title,
             description=description,
@@ -21,11 +21,9 @@ class Embeds:
         try:
             if author:
                 embed.set_author(
-                    name=f"Queried by {author.display_name} ",
-                    icon_url=author.avatar.url if author.avatar else None
+                    name=f"Queried by {author.author.display_name} ",
+                    icon_url=author.author.avatar.url if author.author.avatar else None
                 )
-            elif not author:
-                return f'You need to provide author'
 
             if footer is not None:
                 embed.set_footer(
@@ -51,9 +49,10 @@ class Embeds:
 
     @staticmethod
     def error_embed(
+            author: disnake.ApplicationCommandInteraction,
             value, type=None,
-            footer=None,
-            author: disnake.ApplicationCommandInteraction.author = None):
+            footer: str = '',
+            ):
         try:
             if type != "userError":
                 traceback.print_exc()

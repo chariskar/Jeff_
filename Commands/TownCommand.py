@@ -10,7 +10,7 @@ class TownCommand(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.footer = 'made by charis_k'
-    choices = ['/t join fort elko', '/t join Redwood_City', '/t join Lost_Coast']
+    choices = ['/t join Lost_Coast']
 
 
 
@@ -41,30 +41,39 @@ class TownCommand(commands.Cog):
                 except Exception as e:
                     embed = Embeds.error_embed(
                         value=f'Error is {e}',
-                        footer=self.footer
+                        footer=self.footer,
+                        author=inter
                     )
                     await inter.send(embed=embed)
                     return
             else:
                 try:
                     townsLookup = await Lookup.lookup(server, endpoint="towns", name=town,version=1)
+                    if not townsLookup:
+                        return
                 except Exception as e:
                     embed = Embeds.error_embed(
                         value=f'Error is {e}',
-                        footer=self.footer
+                        footer=self.footer,
+                        author=inter
+                        
                     )
                     await inter.send(embed=embed)
                     return
         except Exception as e:
             embed = Embeds.error_embed(
                 value=f'Error is {e}',
-                footer=self.footer
+                footer=self.footer,
+                        author=inter
+                
             )
             await inter.send(embed=embed)
             return
 
 
         try:
+            if not townsLookup:
+                        return
             try:
                 locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={townsLookup['spawn']['x']}&z={townsLookup['spawn']['z']}"
                 location = f"[{int(round(townsLookup['spawn']['x'], 0))}, {int(round(townsLookup['spawn']['z'], 0))}]({locationUrl})"
@@ -85,7 +94,7 @@ class TownCommand(commands.Cog):
                 title=f"`{townsLookup['strings']['town']}`",
                 description=townsLookup["strings"]["board"],
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             embed.add_field(name="Mayor", value=townsLookup["strings"]["mayor"], inline=True)
@@ -153,7 +162,7 @@ class TownCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -174,16 +183,20 @@ class TownCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 type="userError",
-                footer=commandString
+                footer=commandString,
+                author=inter
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
             return
 
         try:
+            if not townsLookup:
+                        return
+                    
             embed = Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}'s Residents",
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             residentsString = CommandTools.list_to_string(townsLookup["residents"])
@@ -196,7 +209,7 @@ class TownCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -216,18 +229,21 @@ class TownCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=f'Error is {e}',
                 type="userError",
-                footer=commandString
+                footer=commandString,
+                author=inter
             )
             await inter.response.send_message(embed=embed, ephemeral=True)
             return
 
         try:
+            if not townsLookup:
+                        return
             embed = Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}'s Ranked Residents",
                 footer=commandString,
-                author=inter.author
+                author=inter
             )
-
+            
             for rank in townsLookup["ranks"]:
                 if len(townsLookup["ranks"][rank]) != 0:
                     rankString = CommandTools.list_to_string(townsLookup["ranks"][rank])
@@ -251,7 +267,7 @@ class TownCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -278,7 +294,8 @@ class TownCommand(commands.Cog):
                 except Exception as e:
                     embed = Embeds.error_embed(
                         value=f'Error is {e}',
-                        footer=self.footer
+                        footer=self.footer,
+                        author=inter
                     )
                     await inter.send(embed=embed)
                     return
@@ -288,24 +305,28 @@ class TownCommand(commands.Cog):
                 except Exception as e:
                     embed = Embeds.error_embed(
                         value=f'Error is {e}',
-                        footer=self.footer
+                        footer=self.footer,
+                        author=inter
                     )
                     await inter.send(embed=embed)
                     return
         except Exception as e:
             embed = Embeds.error_embed(
                 value=f'Error is {e}',
-                footer=self.footer
+                footer=self.footer,
+                author=inter
             )
             await inter.send(embed=embed)
             return
 
 
         try:
+            if not townsLookup:
+                        return
             embed = Embeds.embed_builder(
                 title=f"`{townsLookup['strings']['town']}'s Outlaws",
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             if len(townsLookup["outlaws"]) != 0:
@@ -322,7 +343,7 @@ class TownCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 

@@ -32,9 +32,13 @@ class NationCommand(commands.Cog):
         try:
             if nation.lower() == "random":
                 allNationsLookup = await Lookup.lookup(server, endpoint="nations")
+                if not allNationsLookup:
+                    return
                 nation = random.choice(allNationsLookup["allNations"])
 
             nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
+            if not nationsLookup:
+                return
             locationUrl = f"https://earthmc.net/map/{server}/?zoom=4&x={nationsLookup['spawn']['x']}&z={nationsLookup['spawn']['z']}"
 
 
@@ -43,7 +47,7 @@ class NationCommand(commands.Cog):
                 title=f"`{nationsLookup['name']}`",
                 description=nationsLookup["board"],
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             embed.add_field(name="King", value=nationsLookup["king"], inline=True)
@@ -86,7 +90,7 @@ class NationCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -105,11 +109,11 @@ class NationCommand(commands.Cog):
 
         try:
             nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
-
+            if not nationsLookup: return
             embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Residents`",
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             residentsString = CommandTools.list_to_string(nationsLookup["residents"])
@@ -122,7 +126,7 @@ class NationCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -141,11 +145,12 @@ class NationCommand(commands.Cog):
 
         try:
             nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
+            if not nationsLookup: return
 
             embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Ranked Residents`",
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             for rank in nationsLookup["ranks"]:
@@ -163,7 +168,7 @@ class NationCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -183,11 +188,12 @@ class NationCommand(commands.Cog):
 
         try:
             nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
+            if not nationsLookup: return
 
             embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Allies`",
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             if len(nationsLookup["allies"]) != 0:
@@ -208,7 +214,7 @@ class NationCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -227,11 +233,12 @@ class NationCommand(commands.Cog):
 
         try:
             nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
+            if not nationsLookup: return
 
             embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Enemies`",
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             if len(nationsLookup["enemies"]) != 0:
@@ -252,7 +259,7 @@ class NationCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -271,11 +278,12 @@ class NationCommand(commands.Cog):
 
         try:
             nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
+            if not nationsLookup: return
 
             embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Towns`",
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
 
             townsString = CommandTools.list_to_string(nationsLookup["towns"])
@@ -287,7 +295,8 @@ class NationCommand(commands.Cog):
         except Exception as e:
             embed = Embeds.error_embed(
                 value=f'Error is {e}',
-                footer=self.footer
+                footer=self.footer,
+                author=inter
             )
 
             await inter.edit_original_response(embed=embed)
@@ -307,12 +316,15 @@ class NationCommand(commands.Cog):
 
         try:
             nationsLookup = await Lookup.lookup(server, endpoint="nations", name=nation)
+            if not nationsLookup: return
+            
             allNationsLookup = await Lookup.lookup(server, endpoint="nations")
+            if not allNationsLookup: return
 
             embed = Embeds.embed_builder(
                 title=f"`{nationsLookup['strings']['nation']}'s Unallied Nations`",
                 footer=self.footer,
-                author=inter.author,
+                author=inter,
             )
 
             allyList = nationsLookup["allies"]
@@ -339,7 +351,7 @@ class NationCommand(commands.Cog):
         except Exception as e:
             embed = Embeds.error_embed(
                 value=f'Error is {e}',
-
+                author=inter,
                 footer=self.footer
             )
 

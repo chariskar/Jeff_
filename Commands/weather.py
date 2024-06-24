@@ -19,7 +19,7 @@ class Weather(commands.Cog):
             await inter.response.send_message("Invalid unit system. Please use 'metric' or 'imperial'.")
             return
 
-        api_key = dotenv.get_key(dotenv_path='OPENWEATHER.env', key_to_get='KEY')
+        api_key = dotenv.get_key(dotenv_path='secrets.env', key_to_get='KEY')
         base_url = "http://api.openweathermap.org/data/2.5/weather?"
 
         params: dict = {
@@ -28,10 +28,10 @@ class Weather(commands.Cog):
             "units": unit,
         }
 
-        async with aiohttp.ClientSession as session:
+        async with aiohttp.ClientSession() as session:
             async with session.get(url=base_url, params=params) as response:
-                response = response.json
-
+                response = response.json() 
+        
         weather_description = response["weather"][0]["description"]
         temperature = response["main"]["temp"]
         humidity = response["main"]["humidity"]
@@ -39,7 +39,7 @@ class Weather(commands.Cog):
         unit_symbol = "°C" if unit == "metric" else "°F"
         embed = Embeds.embed_builder(
             title=f'Weather in {location}',
-            author=inter.author,
+            author=inter,
             footer='made by charis_k'
         )
         embed.add_field(name="Description", value=weather_description, inline=True)

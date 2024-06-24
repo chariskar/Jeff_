@@ -36,16 +36,8 @@ class ResCommand(commands.Cog):
                 username = random.choice(allResidentsLookup["allResidents"])
 
             residentsLookup = await Lookup.lookup(server, endpoint="residents", name=username,version=1)
-        except Exception as e:
-            embed = Embeds.error_embed(
-                value=e,
-                footer=self.footer,
-                author=inter.author
-            )
-            await inter.edit_original_response(embed=embed)
-            return
-
-        try:
+            if not residentsLookup:
+                return
             fullNameList = [residentsLookup["strings"]["title"], residentsLookup["strings"]["username"], residentsLookup["strings"]["surname"]]
             fullNameList = [x for x in fullNameList if x != ""]
             fullName = " ".join(fullNameList)
@@ -62,7 +54,7 @@ class ResCommand(commands.Cog):
 
             embed = Embeds.embed_builder(
                 title=f"`{fullName}`",
-                author=inter.author,
+                author=inter,
                 footer=self.footer,
                 thumbnail=f"https://mc-heads.net/head/{residentsLookup['strings']['username']}",
             )
@@ -88,7 +80,7 @@ class ResCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -110,15 +102,18 @@ class ResCommand(commands.Cog):
                 value=f'Error is {e}',
                 type="userError",
                 footer=self.footer,
+                author=inter
             )
             await inter.send(embed=embed, ephemeral=True)
             return
 
         try:
+            if not residentsLookup:
+                return
             embed = Embeds.embed_builder(
-                title=f"`{residentsLookup['strings']['username']}'s Friends",
+                title=f"{residentsLookup['strings']['username']}'s Friends",
                 footer=self.footer,
-                author=inter.author,
+                author=inter,
             )
 
             if residentsLookup["friends"]:
@@ -133,7 +128,7 @@ class ResCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 

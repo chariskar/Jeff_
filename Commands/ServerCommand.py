@@ -21,29 +21,22 @@ class ServerCommand(commands.Cog):
             choices=["aurora"]
         )
     ):
+
         try:
+            
             serverLookup = await Lookup.lookup(server)
             allResidentsLookup = await Lookup.lookup(server, endpoint="residents",version=1)
             allTownsLookup = await Lookup.lookup(server, endpoint="towns",version=1)
             allNationsLookup = await Lookup.lookup(server, endpoint="nations",version=1)
-
-        except Exception as e:
-            embed = Embeds.error_embed(
-                value=f'Error is {e}',
-                footer=self.footer
-            )
-
-            await inter.send(embed=embed, ephemeral=True)
-            return
-
-        try:
             weather = CommandTools.get_weather(serverLookup)
 
             embed = Embeds.embed_builder(
                 title=f"`{server.capitalize()}`",
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
+            if not serverLookup:
+                return
 
             embed.add_field(
                 name="Online Players",
@@ -71,7 +64,7 @@ class ServerCommand(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 

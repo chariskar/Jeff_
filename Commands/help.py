@@ -45,7 +45,8 @@ class Help(commands.Cog):
         except Exception as e:
             embed = Embeds.error_embed(
                 value=e,
-                footer=self.footer
+                footer=self.footer,
+                author=inter
             )
             await inter.response.send_message(embed=embed)
 
@@ -56,7 +57,7 @@ class Help(commands.Cog):
             embed = Embeds.embed_builder(
                 title='Commands',
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             embed.add_field(
                 name='Nation',
@@ -91,7 +92,7 @@ class Help(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 
@@ -108,7 +109,7 @@ class Help(commands.Cog):
             if command in command_dict and subcommand in command_dict[command]:
                 embed = Embeds.embed_builder(
                     title=f'Help for {inter.author.global_name}',
-                    author=inter.author,
+                    author=inter,
                     footer=self.footer
                 )
                 if command == 'nation':
@@ -221,7 +222,7 @@ class Help(commands.Cog):
             elif command and subcommand == 'None' or not subcommand:
                 embed = Embeds.embed_builder(
                     title=f'Help for {inter.author.global_name}',
-                    author=inter.author,
+                    author=inter,
                     footer=self.footer
                 )
                 if command == 'nation':
@@ -257,7 +258,7 @@ class Help(commands.Cog):
                 elif command == 'devcommands':
                     embed.add_field(
                         name=f'The {command} command',
-                        value=f'The dev commands only one is available to anyone',
+                        value=f'The dev commands only ping is available to anyone',
                         inline=True
                     )
                 await inter.edit_original_response(embed=embed)
@@ -267,7 +268,7 @@ class Help(commands.Cog):
             embed = Embeds.error_embed(
                 value=e,
                 footer=self.footer,
-                author=inter.author
+                author=inter
             )
             await inter.edit_original_response(embed=embed)
 

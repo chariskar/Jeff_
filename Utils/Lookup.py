@@ -1,13 +1,13 @@
 import aiohttp
-from cachetools import TTLCache
+from cachetools import LRUCache
 import json
 
 
 class Lookup:
-    cache: TTLCache = TTLCache(maxsize=289, ttl=150)
+    cache: LRUCache = LRUCache(maxsize=289)
 
     @classmethod
-    async def lookup(cls, server: str = 'aurora', endpoint=None, name=None, version: int = 2):
+    async def lookup(cls, server: str = 'aurora', endpoint: str = '', name: str = '', version: int = 2):
         try:
 
             if endpoint is None:
@@ -18,8 +18,10 @@ class Lookup:
                 api_url = f"https://api.earthmc.net/v{version}/{server}/{endpoint}/{name}"
             if endpoint == 'alliances':
                 api_url = f'https://emctoolkit.vercel.app/api/aurora/alliances/{name}'
+                
             if (server, endpoint, name) in cls.cache:
                 return cls.cache[(server, endpoint, name)]
+            
             async with aiohttp.ClientSession() as session:
                 async with session.get(api_url) as response:
                     response_text = await response.text()
